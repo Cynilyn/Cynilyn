@@ -1,0 +1,149 @@
+<html>
+<head>
+<title>Listing of VCRUNTIME_NEW.H</title>
+</head>
+<body bgcolor="FFFFFF">
+<h4>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;VCRUNTIME_NEW.H&#160;&#160;&#160;&#160;&#160;&#160;&#160;<font size=-1>coverage:&#160 50.00&#160;%func&#160;&#160;&#160;&#160; 50.00&#160;%block</font></h4>
+<hr size=1 noshade>
+<pre>
+     1) <a name="l1" style="background-color: #ffffff">//</a>
+     2) <a name="l2" style="background-color: #ffffff">// vcruntime_new.h</a>
+     3) <a name="l3" style="background-color: #ffffff">//</a>
+     4) <a name="l4" style="background-color: #ffffff">//      Copyright (c) Microsoft Corporation. All rights reserved.</a>
+     5) <a name="l5" style="background-color: #ffffff">//</a>
+     6) <a name="l6" style="background-color: #ffffff">// Declarations and definitions of memory management functions in the VCRuntime.</a>
+     7) <a name="l7" style="background-color: #ffffff">//</a>
+     8) <a name="l8" style="background-color: #ffffff">#pragma once</a>
+     9) <a name="l9" style="background-color: #ffffff"></a>
+    10) <a name="l10" style="background-color: #ffffff">#include &lt;vcruntime.h&gt;</a>
+    11) <a name="l11" style="background-color: #ffffff"></a>
+    12) <a name="l12" style="background-color: #ffffff">#ifdef __cplusplus</a>
+    13) <a name="l13" style="background-color: #ffffff">extern &quot;C++&quot; {</a>
+    14) <a name="l14" style="background-color: #ffffff"></a>
+    15) <a name="l15" style="background-color: #ffffff">#pragma pack(push, _CRT_PACKING)</a>
+    16) <a name="l16" style="background-color: #ffffff"></a>
+    17) <a name="l17" style="background-color: #ffffff">#pragma warning(push)</a>
+    18) <a name="l18" style="background-color: #ffffff">#pragma warning(disable: 4985) // attributes not present on previous declaration</a>
+    19) <a name="l19" style="background-color: #ffffff"></a>
+    20) <a name="l20" style="background-color: #ffffff">#pragma push_macro(&quot;new&quot;)</a>
+    21) <a name="l21" style="background-color: #ffffff">#undef new</a>
+    22) <a name="l22" style="background-color: #ffffff"></a>
+    23) <a name="l23" style="background-color: #ffffff">#ifndef __NOTHROW_T_DEFINED</a>
+    24) <a name="l24" style="background-color: #ffffff">#define __NOTHROW_T_DEFINED</a>
+    25) <a name="l25" style="background-color: #ffffff">    namespace std</a>
+    26) <a name="l26" style="background-color: #ffffff">    {</a>
+    27) <a name="l27" style="background-color: #ffffff">        struct nothrow_t { };</a>
+    28) <a name="l28" style="background-color: #ffffff"></a>
+    29) <a name="l29" style="background-color: #ffffff">        extern nothrow_t const nothrow;</a>
+    30) <a name="l30" style="background-color: #ffffff">    }</a>
+    31) <a name="l31" style="background-color: #ffffff">#endif</a>
+    32) <a name="l32" style="background-color: #ffffff"></a>
+    33) <a name="l33" style="background-color: #ffffff">_Ret_notnull_ _Post_writable_byte_size_(_Size)</a>
+    34) <a name="l34" style="background-color: #ffffff">_VCRT_ALLOCATOR void* __CRTDECL operator new(</a>
+    35) <a name="l35" style="background-color: #ffffff">    size_t _Size</a>
+    36) <a name="l36" style="background-color: #ffffff">    );</a>
+    37) <a name="l37" style="background-color: #ffffff"></a>
+    38) <a name="l38" style="background-color: #ffffff">_Ret_maybenull_ _Success_(return != NULL) _Post_writable_byte_size_(_Size)</a>
+    39) <a name="l39" style="background-color: #ffffff">_VCRT_ALLOCATOR void* __CRTDECL operator new(</a>
+    40) <a name="l40" style="background-color: #ffffff">    size_t                _Size,</a>
+    41) <a name="l41" style="background-color: #ffffff">    std::nothrow_t const&amp;</a>
+    42) <a name="l42" style="background-color: #ffffff">    ) throw();</a>
+    43) <a name="l43" style="background-color: #ffffff"></a>
+    44) <a name="l44" style="background-color: #ffffff">_Ret_notnull_ _Post_writable_byte_size_(_Size)</a>
+    45) <a name="l45" style="background-color: #ffffff">_VCRT_ALLOCATOR void* __CRTDECL operator new[](</a>
+    46) <a name="l46" style="background-color: #ffffff">    size_t _Size</a>
+    47) <a name="l47" style="background-color: #ffffff">    );</a>
+    48) <a name="l48" style="background-color: #ffffff"></a>
+    49) <a name="l49" style="background-color: #ffffff">_Ret_maybenull_ _Success_(return != NULL) _Post_writable_byte_size_(_Size)</a>
+    50) <a name="l50" style="background-color: #ffffff">_VCRT_ALLOCATOR void* __CRTDECL operator new[](</a>
+    51) <a name="l51" style="background-color: #ffffff">    size_t                _Size,</a>
+    52) <a name="l52" style="background-color: #ffffff">    std::nothrow_t const&amp;</a>
+    53) <a name="l53" style="background-color: #ffffff">    ) throw();</a>
+    54) <a name="l54" style="background-color: #ffffff"></a>
+    55) <a name="l55" style="background-color: #ffffff">void __CRTDECL operator delete(</a>
+    56) <a name="l56" style="background-color: #ffffff">    void* _Block</a>
+    57) <a name="l57" style="background-color: #ffffff">    ) throw();</a>
+    58) <a name="l58" style="background-color: #ffffff"></a>
+    59) <a name="l59" style="background-color: #ffffff">void __CRTDECL operator delete(</a>
+    60) <a name="l60" style="background-color: #ffffff">    void* _Block,</a>
+    61) <a name="l61" style="background-color: #ffffff">    std::nothrow_t const&amp;</a>
+    62) <a name="l62" style="background-color: #ffffff">    ) throw();</a>
+    63) <a name="l63" style="background-color: #ffffff"></a>
+    64) <a name="l64" style="background-color: #ffffff">void __CRTDECL operator delete[](</a>
+    65) <a name="l65" style="background-color: #ffffff">    void* _Block</a>
+    66) <a name="l66" style="background-color: #ffffff">    ) throw();</a>
+    67) <a name="l67" style="background-color: #ffffff"></a>
+    68) <a name="l68" style="background-color: #ffffff">void __CRTDECL operator delete[](</a>
+    69) <a name="l69" style="background-color: #ffffff">    void* _Block,</a>
+    70) <a name="l70" style="background-color: #ffffff">    std::nothrow_t const&amp;</a>
+    71) <a name="l71" style="background-color: #ffffff">    ) throw();</a>
+    72) <a name="l72" style="background-color: #ffffff"></a>
+    73) <a name="l73" style="background-color: #ffffff">void __CRTDECL operator delete(</a>
+    74) <a name="l74" style="background-color: #ffffff">    void*  _Block,</a>
+    75) <a name="l75" style="background-color: #ffffff">    size_t _Size</a>
+    76) <a name="l76" style="background-color: #ffffff">    ) throw();</a>
+    77) <a name="l77" style="background-color: #ffffff"></a>
+    78) <a name="l78" style="background-color: #ffffff">void __CRTDECL operator delete[](</a>
+    79) <a name="l79" style="background-color: #ffffff">    void* _Block,</a>
+    80) <a name="l80" style="background-color: #ffffff">    size_t _Size</a>
+    81) <a name="l81" style="background-color: #ffffff">    ) throw();</a>
+    82) <a name="l82" style="background-color: #ffffff"></a>
+    83) <a name="l83" style="background-color: #ffffff">#ifndef __PLACEMENT_NEW_INLINE</a>
+    84) <a name="l84" style="background-color: #ffffff">    #define __PLACEMENT_NEW_INLINE</a>
+    85) <a name="l85" style="background-color: #ffffff">    _Ret_notnull_ _Post_writable_byte_size_(_Size)</a>
+    86) <a name="l86" style="background-color: #ffffff">    inline void* __CRTDECL operator new(size_t _Size, _Writable_bytes_(_Size) void* _Where) throw()</a>
+    87) <a name="l87" style="background-color: #ffffff">    {</a>
+    88) <a name="l88" style="background-color: #ffffff">        (void)_Size;</a>
+    89) <a name="l89" style="background-color: #ffffff">        return _Where;</a>
+    90) <a name="l90" style="background-color: #ffffff">    }</a>
+    91) <a name="l91" style="background-color: #ffffff"></a>
+    92) <a name="l92" style="background-color: #ffffff">    inline void __CRTDECL </a><a style="background-color: #ffcccc">operator delete(void*, void*) throw()</a>
+    93) <a name="l93" style="background-color: #ffcccc">    {</a>
+    94) <a name="l94" style="background-color: #ffcccc">        return;</a>
+    95) <a name="l95" style="background-color: #ffcccc">    }</a>
+    96) <a name="l96" style="background-color: #ffffff">#endif</a>
+    97) <a name="l97" style="background-color: #ffffff"></a>
+    98) <a name="l98" style="background-color: #ffffff">#ifndef __PLACEMENT_VEC_NEW_INLINE</a>
+    99) <a name="l99" style="background-color: #ffffff">    #define __PLACEMENT_VEC_NEW_INLINE</a>
+   100) <a name="l100" style="background-color: #ffffff">    _Ret_notnull_ _Post_writable_byte_size_(_Size)</a>
+   101) <a name="l101" style="background-color: #ffffff">    inline void* __CRTDECL operator new[](size_t _Size, _Writable_bytes_(_Size) void* _Where) throw()</a>
+   102) <a name="l102" style="background-color: #ffffff">    {</a>
+   103) <a name="l103" style="background-color: #ffffff">        (void)_Size;</a>
+   104) <a name="l104" style="background-color: #ffffff">        return _Where;</a>
+   105) <a name="l105" style="background-color: #ffffff">    }</a>
+   106) <a name="l106" style="background-color: #ffffff"></a>
+   107) <a name="l107" style="background-color: #ffffff">    inline void __CRTDECL operator delete[](void*, void*) throw()</a>
+   108) <a name="l108" style="background-color: #ffffff">    {</a>
+   109) <a name="l109" style="background-color: #ffffff">    }</a>
+   110) <a name="l110" style="background-color: #ffffff">#endif</a>
+   111) <a name="l111" style="background-color: #ffffff"></a>
+   112) <a name="l112" style="background-color: #ffffff">#pragma pop_macro(&quot;new&quot;)</a>
+   113) <a name="l113" style="background-color: #ffffff"></a>
+   114) <a name="l114" style="background-color: #ffffff">#pragma warning(pop)</a>
+   115) <a name="l115" style="background-color: #ffffff">#pragma pack(pop)</a>
+   116) <a name="l116" style="background-color: #ffffff"></a>
+   117) <a name="l117" style="background-color: #ffffff">} // extern &quot;C++&quot;</a>
+   118) <a name="l118" style="background-color: #ffffff">#endif // __cplusplus</a>
+</pre>
+<hr size=1 noshade>
+<table border=0 cellpadding=3 cellspacing=0 width="100%" style="color:black;font-weight:normal;font-family:Verdana,Arial;font-size:xx-small">
+<td width="50%">
+<table border=0 cellpadding=3 cellspacing=0>
+<tr>
+<td>
+<a target="_new" href="http://www.intel.com"><img src="__IntelR.gif" border="0"></a>
+</td>
+<td style="font-size:xx-small">
+<i>generated by </i><BR><a target="_new" href="http://www.intel.com/software/products/compilers">Intel(R) C++/Fortran Compiler code-coverage tool</a>
+</td>
+</tr>
+</table>
+</td>
+<td>
+<table border=0 cellpadding=3 cellspacing=0 width="50%">
+<tr><a>Web-Page Owner: <a href="mailto:nobody">Nobody</a></tr>
+</table>
+</td>
+</table>
+</body>
+</html>

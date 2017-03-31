@@ -1,0 +1,5 @@
+﻿  main.cpp
+c:\users\mr. kim\documents\visual studio 2015\projects\2868-달팽이는 올라가고 싶다\2868-달팽이는 올라가고 싶다\main.cpp(6): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+  2868-달팽이는 올라가고 싶다.vcxproj -> c:\users\mr. kim\documents\visual studio 2015\Projects\2868-달팽이는 올라가고 싶다\Debug\2868-달팽이는 올라가고 싶다.exe
+  2868-달팽이는 올라가고 싶다.vcxproj -> c:\users\mr. kim\documents\visual studio 2015\Projects\2868-달팽이는 올라가고 싶다\Debug\2868-달팽이는 올라가고 싶다.pdb (Full PDB)

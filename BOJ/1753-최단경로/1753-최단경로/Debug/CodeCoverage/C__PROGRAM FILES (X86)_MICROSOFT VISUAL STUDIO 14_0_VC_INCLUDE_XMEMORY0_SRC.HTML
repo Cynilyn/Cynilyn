@@ -1,0 +1,1207 @@
+<html>
+<head>
+<title>Listing of XMEMORY0</title>
+</head>
+<body bgcolor="FFFFFF">
+<h4>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;XMEMORY0&#160;&#160;&#160;&#160;&#160;&#160;&#160;<font size=-1>coverage:&#160 83.56&#160;%func&#160;&#160;&#160;&#160; 54.15&#160;%block</font></h4>
+<hr size=1 noshade>
+<pre>
+     1) <a name="l1" style="background-color: #ffffff">// xmemory0 internal header (from &lt;memory&gt;)</a>
+     2) <a name="l2" style="background-color: #ffffff">#pragma once</a>
+     3) <a name="l3" style="background-color: #ffffff">#ifndef _XMEMORY0_</a>
+     4) <a name="l4" style="background-color: #ffffff">#define _XMEMORY0_</a>
+     5) <a name="l5" style="background-color: #ffffff">#ifndef RC_INVOKED</a>
+     6) <a name="l6" style="background-color: #ffffff">#include &lt;cstdint&gt;	/* for uintptr_t */</a>
+     7) <a name="l7" style="background-color: #ffffff">#include &lt;cstdlib&gt;</a>
+     8) <a name="l8" style="background-color: #ffffff">#include &lt;limits&gt;</a>
+     9) <a name="l9" style="background-color: #ffffff">#include &lt;new&gt;</a>
+    10) <a name="l10" style="background-color: #ffffff">#include &lt;xutility&gt;</a>
+    11) <a name="l11" style="background-color: #ffffff"></a>
+    12) <a name="l12" style="background-color: #ffffff"> #pragma pack(push,_CRT_PACKING)</a>
+    13) <a name="l13" style="background-color: #ffffff"> #pragma warning(push,3)</a>
+    14) <a name="l14" style="background-color: #ffffff"> #pragma push_macro(&quot;new&quot;)</a>
+    15) <a name="l15" style="background-color: #ffffff"> #undef new</a>
+    16) <a name="l16" style="background-color: #ffffff"></a>
+    17) <a name="l17" style="background-color: #ffffff"> #if !defined(_DECLSPEC_ALLOCATOR)</a>
+    18) <a name="l18" style="background-color: #ffffff">  #define _DECLSPEC_ALLOCATOR	__declspec(allocator)</a>
+    19) <a name="l19" style="background-color: #ffffff"> #endif /* !defined(_DECLSPEC_ALLOCATOR) */</a>
+    20) <a name="l20" style="background-color: #ffffff"></a>
+    21) <a name="l21" style="background-color: #ffffff"> #pragma warning(disable: 4100)</a>
+    22) <a name="l22" style="background-color: #ffffff"></a>
+    23) <a name="l23" style="background-color: #ffffff">_STD_BEGIN</a>
+    24) <a name="l24" style="background-color: #ffffff">#define _BIG_ALLOCATION_THRESHOLD	4096</a>
+    25) <a name="l25" style="background-color: #ffffff">#define _BIG_ALLOCATION_ALIGNMENT	32</a>
+    26) <a name="l26" style="background-color: #ffffff"></a>
+    27) <a name="l27" style="background-color: #ffffff"> #ifdef _DEBUG</a>
+    28) <a name="l28" style="background-color: #ffffff">#define _NON_USER_SIZE (2 * sizeof(void *) + _BIG_ALLOCATION_ALIGNMENT - 1)</a>
+    29) <a name="l29" style="background-color: #ffffff"></a>
+    30) <a name="l30" style="background-color: #ffffff"> #else /* _DEBUG */</a>
+    31) <a name="l31" style="background-color: #ffffff">#define _NON_USER_SIZE (sizeof(void *) + _BIG_ALLOCATION_ALIGNMENT - 1)</a>
+    32) <a name="l32" style="background-color: #ffffff"> #endif /* _DEBUG */</a>
+    33) <a name="l33" style="background-color: #ffffff"></a>
+    34) <a name="l34" style="background-color: #ffffff"> #ifdef _DEBUG</a>
+    35) <a name="l35" style="background-color: #ffffff"></a>
+    36) <a name="l36" style="background-color: #ffffff">  #if defined(_WIN64)</a>
+    37) <a name="l37" style="background-color: #ffffff">#define _BIG_ALLOCATION_SENTINEL	0xFAFAFAFAFAFAFAFAULL</a>
+    38) <a name="l38" style="background-color: #ffffff"></a>
+    39) <a name="l39" style="background-color: #ffffff">  #else /* defined(_WIN64) */</a>
+    40) <a name="l40" style="background-color: #ffffff">#define _BIG_ALLOCATION_SENTINEL	0xFAFAFAFAUL</a>
+    41) <a name="l41" style="background-color: #ffffff">  #endif /* defined(_WIN64) */</a>
+    42) <a name="l42" style="background-color: #ffffff"> #endif /* _DEBUG */</a>
+    43) <a name="l43" style="background-color: #ffffff"></a>
+    44) <a name="l44" style="background-color: #ffffff">		// FUNCTION _Allocate</a>
+    45) <a name="l45" style="background-color: #ffffff">inline</a>
+    46) <a name="l46" style="background-color: #ffffff">	_DECLSPEC_ALLOCATOR void *_Allocate(size_t _Count, size_t _Sz,</a>
+    47) <a name="l47" style="background-color: #ffffff">		bool _Try_aligned_allocation = true)</a>
+    48) <a name="l48" style="background-color: #ffffff">	{	// allocate storage for _Count elements of size _Sz</a>
+    49) <a name="l49" style="background-color: #ffffff">	void *_Ptr = 0;</a>
+    50) <a name="l50" style="background-color: #ffffff"></a>
+    51) <a name="l51" style="background-color: #ffffff">	if (_Count == 0)</a>
+    52) <a name="l52" style="background-color: #ffff99">		return (_Ptr);</a>
+    53) <a name="l53" style="background-color: #ffff99"></a>
+    54) <a name="l54" style="background-color: #ffff99">	// check overflow of multiply</a>
+    55) <a name="l55" style="background-color: #ffffff">	if ((size_t)(-1) / _Sz &lt; _Count)</a>
+    56) <a name="l56" style="background-color: #ffff99">		_Xbad_alloc();	// report no memory</a>
+    57) <a name="l57" style="background-color: #ffff99">	const size_t _User_size </a><a style="background-color: #ffffff">= _Count * _Sz;</a>
+    58) <a name="l58" style="background-color: #ffffff"></a>
+    59) <a name="l59" style="background-color: #ffffff"> #if defined(_M_IX86) || defined(_M_X64)</a>
+    60) <a name="l60" style="background-color: #ffffff">	if (_Try_aligned_allocation</a>
+    61) <a name="l61" style="background-color: #ffffff">		&amp;&amp; _BIG_ALLOCATION_THRESHOLD &lt;= _User_size)</a>
+    62) <a name="l62" style="background-color: #ffffff">		{	// allocate large block</a>
+    63) <a name="l63" style="background-color: #ffffff">		static_assert(sizeof (void *) &lt; _BIG_ALLOCATION_ALIGNMENT,</a>
+    64) <a name="l64" style="background-color: #ffffff">			&quot;Big allocations should at least match vector register size&quot;);</a>
+    65) <a name="l65" style="background-color: #ffffff">		const size_t _Block_size </a><a style="background-color: #ffff99">= _NON_USER_SIZE + _User_size;</a>
+    66) <a name="l66" style="background-color: #ffff99">		if (_Block_size &lt;= _User_size)</a>
+    67) <a name="l67" style="background-color: #ffff99">			_Xbad_alloc();	// report no memory</a>
+    68) <a name="l68" style="background-color: #ffff99">		const uintptr_t _Ptr_container =</a>
+    69) <a name="l69" style="background-color: #ffff99">			reinterpret_cast&lt;uintptr_t&gt;(::operator new(_Block_size));</a>
+    70) <a name="l70" style="background-color: #ffff99">		_SCL_SECURE_ALWAYS_VALIDATE(_Ptr_container != 0);</a>
+    71) <a name="l71" style="background-color: #ffff99">		_Ptr = reinterpret_cast&lt;void *&gt;((_Ptr_container + _NON_USER_SIZE)</a>
+    72) <a name="l72" style="background-color: #ffff99">			&amp; ~(_BIG_ALLOCATION_ALIGNMENT - 1));</a>
+    73) <a name="l73" style="background-color: #ffff99">		static_cast&lt;uintptr_t *&gt;(_Ptr)[-1] = _Ptr_container;</a>
+    74) <a name="l74" style="background-color: #ffff99"></a>
+    75) <a name="l75" style="background-color: #ffff99"> #ifdef _DEBUG</a>
+    76) <a name="l76" style="background-color: #ffff99">		static_cast&lt;uintptr_t *&gt;(_Ptr)[-2] = _BIG_ALLOCATION_SENTINEL;</a>
+    77) <a name="l77" style="background-color: #ffff99"> #endif /* _DEBUG */</a>
+    78) <a name="l78" style="background-color: #ffff99">		}</a>
+    79) <a name="l79" style="background-color: #ffff99">	else</a>
+    80) <a name="l80" style="background-color: #ffff99"> #endif /* defined(_M_IX86) || defined(_M_X64) */</a>
+    81) <a name="l81" style="background-color: #ffff99"></a>
+    82) <a name="l82" style="background-color: #ffff99">		{	// allocate normal block</a>
+    83) <a name="l83" style="background-color: #ffffff">		_Ptr = ::operator new(_User_size);</a>
+    84) <a name="l84" style="background-color: #ffff99">		_SCL_SECURE_ALWAYS_VALIDATE(_Ptr != 0);</a>
+    85) <a name="l85" style="background-color: #ffff99">		}</a>
+    86) <a name="l86" style="background-color: #ffffff">	return (_Ptr);</a>
+    87) <a name="l87" style="background-color: #ffffff">	}</a>
+    88) <a name="l88" style="background-color: #ffffff"></a>
+    89) <a name="l89" style="background-color: #ffffff">		// FUNCTION _Deallocate</a>
+    90) <a name="l90" style="background-color: #ffffff">inline</a>
+    91) <a name="l91" style="background-color: #ffffff">	void _Deallocate(void * _Ptr, size_t _Count, size_t _Sz)</a>
+    92) <a name="l92" style="background-color: #ffffff">	{	// deallocate storage for _Count elements of size _Sz</a>
+    93) <a name="l93" style="background-color: #ffffff"> #if defined(_M_IX86) || defined(_M_X64)</a>
+    94) <a name="l94" style="background-color: #ffff99">	_SCL_SECURE_ALWAYS_VALIDATE(_Count &lt;= (size_t)(-1) / _Sz);</a>
+    95) <a name="l95" style="background-color: #ffff99">	const size_t _User_size </a><a style="background-color: #ffffff">= _Count * _Sz;</a>
+    96) <a name="l96" style="background-color: #ffffff">	if (_BIG_ALLOCATION_THRESHOLD &lt;= _User_size)</a>
+    97) <a name="l97" style="background-color: #ffffff">		{	// deallocate large block</a>
+    98) <a name="l98" style="background-color: #ffffff">		const uintptr_t _Ptr_user </a><a style="background-color: #ffff99">= reinterpret_cast&lt;uintptr_t&gt;(_Ptr);</a>
+    99) <a name="l99" style="background-color: #ffff99">		_SCL_SECURE_ALWAYS_VALIDATE(</a>
+   100) <a name="l100" style="background-color: #ffff99">			(_Ptr_user &amp; (_BIG_ALLOCATION_ALIGNMENT - 1)) == 0);</a>
+   101) <a name="l101" style="background-color: #ffff99">		const uintptr_t _Ptr_ptr = _Ptr_user - sizeof(void *);</a>
+   102) <a name="l102" style="background-color: #ffff99">		const uintptr_t _Ptr_container =</a>
+   103) <a name="l103" style="background-color: #ffff99">			*reinterpret_cast&lt;uintptr_t *&gt;(_Ptr_ptr);</a>
+   104) <a name="l104" style="background-color: #ffff99"></a>
+   105) <a name="l105" style="background-color: #ffff99"> #ifdef _DEBUG</a>
+   106) <a name="l106" style="background-color: #ffff99">		// If the following asserts, it likely means that we are performing</a>
+   107) <a name="l107" style="background-color: #ffff99">		// an aligned delete on memory coming from an unaligned allocation.</a>
+   108) <a name="l108" style="background-color: #ffff99">		_SCL_SECURE_ALWAYS_VALIDATE(</a>
+   109) <a name="l109" style="background-color: #ffff99">			reinterpret_cast&lt;uintptr_t *&gt;(_Ptr_ptr)[-1] ==</a>
+   110) <a name="l110" style="background-color: #ffff99">				_BIG_ALLOCATION_SENTINEL);</a>
+   111) <a name="l111" style="background-color: #ffff99"> #endif /* _DEBUG */</a>
+   112) <a name="l112" style="background-color: #ffff99"></a>
+   113) <a name="l113" style="background-color: #ffff99">		// Extra paranoia on aligned allocation/deallocation</a>
+   114) <a name="l114" style="background-color: #ffff99">		_SCL_SECURE_ALWAYS_VALIDATE(_Ptr_container &lt; _Ptr_user);</a>
+   115) <a name="l115" style="background-color: #ffff99"></a>
+   116) <a name="l116" style="background-color: #ffff99"> #ifdef _DEBUG</a>
+   117) <a name="l117" style="background-color: #ffff99">		_SCL_SECURE_ALWAYS_VALIDATE(2 * sizeof(void *)</a>
+   118) <a name="l118" style="background-color: #ffff99">			&lt;= _Ptr_user - _Ptr_container);</a>
+   119) <a name="l119" style="background-color: #ffff99"></a>
+   120) <a name="l120" style="background-color: #ffff99"> #else /* _DEBUG */</a>
+   121) <a name="l121" style="background-color: #ffff99">		_SCL_SECURE_ALWAYS_VALIDATE(sizeof(void *)</a>
+   122) <a name="l122" style="background-color: #ffff99">			&lt;= _Ptr_user - _Ptr_container);</a>
+   123) <a name="l123" style="background-color: #ffff99"> #endif /* _DEBUG */</a>
+   124) <a name="l124" style="background-color: #ffff99"></a>
+   125) <a name="l125" style="background-color: #ffff99">		_SCL_SECURE_ALWAYS_VALIDATE(_Ptr_user - _Ptr_container</a>
+   126) <a name="l126" style="background-color: #ffff99">			&lt;= _NON_USER_SIZE);</a>
+   127) <a name="l127" style="background-color: #ffff99"></a>
+   128) <a name="l128" style="background-color: #ffff99">		_Ptr = reinterpret_cast&lt;void *&gt;(_Ptr_container);</a>
+   129) <a name="l129" style="background-color: #ffff99">		}</a>
+   130) <a name="l130" style="background-color: #ffff99"> #endif /* defined(_M_IX86) || defined(_M_X64) */</a>
+   131) <a name="l131" style="background-color: #ffff99"></a>
+   132) <a name="l132" style="background-color: #ffffff">	::operator delete(_Ptr);</a>
+   133) <a name="l133" style="background-color: #ffffff">	}</a>
+   134) <a name="l134" style="background-color: #ffffff"></a>
+   135) <a name="l135" style="background-color: #ffffff">		// TEMPLATE FUNCTION _Construct</a>
+   136) <a name="l136" style="background-color: #ffffff">template&lt;class _Ty1,</a>
+   137) <a name="l137" style="background-color: #ffffff">	class _Ty2&gt; inline</a>
+   138) <a name="l138" style="background-color: #ffffff">	void _Construct(_Ty1 *_Ptr, _Ty2&amp;&amp; _Val)</a>
+   139) <a name="l139" style="background-color: #ffffff">	{	// construct object at _Ptr with value _Val</a>
+   140) <a name="l140" style="background-color: #ffffff">	void *_Vptr = _Ptr;</a>
+   141) <a name="l141" style="background-color: #ffffff">	::new (_Vptr) _Ty1(_STD forward&lt;_Ty2&gt;(_Val));</a>
+   142) <a name="l142" style="background-color: #ffffff">	}</a>
+   143) <a name="l143" style="background-color: #ffffff"></a>
+   144) <a name="l144" style="background-color: #ffffff">template&lt;class _Ty1&gt; inline</a>
+   145) <a name="l145" style="background-color: #ffffff">	void _Construct(_Ty1 *_Ptr)</a>
+   146) <a name="l146" style="background-color: #ffffff">	{	// construct object at _Ptr with default value</a>
+   147) <a name="l147" style="background-color: #ffffff">	void *_Vptr = _Ptr;</a>
+   148) <a name="l148" style="background-color: #ffffff"></a>
+   149) <a name="l149" style="background-color: #ffffff">	::new (_Vptr) _Ty1();</a>
+   150) <a name="l150" style="background-color: #ffffff">	}</a>
+   151) <a name="l151" style="background-color: #ffffff"></a>
+   152) <a name="l152" style="background-color: #ffffff">		// TEMPLATE CLASS _Is_simple_alloc</a>
+   153) <a name="l153" style="background-color: #ffffff">template&lt;class _Alty&gt;</a>
+   154) <a name="l154" style="background-color: #ffffff">	struct _Is_simple_alloc</a>
+   155) <a name="l155" style="background-color: #ffffff">		: _Cat_base&lt;is_same&lt;typename _Alty::size_type, size_t&gt;::value</a>
+   156) <a name="l156" style="background-color: #ffffff">		&amp;&amp; is_same&lt;typename _Alty::difference_type, ptrdiff_t&gt;::value</a>
+   157) <a name="l157" style="background-color: #ffffff">		&amp;&amp; is_same&lt;typename _Alty::pointer,</a>
+   158) <a name="l158" style="background-color: #ffffff">			typename _Alty::value_type *&gt;::value</a>
+   159) <a name="l159" style="background-color: #ffffff">		&amp;&amp; is_same&lt;typename _Alty::const_pointer,</a>
+   160) <a name="l160" style="background-color: #ffffff">			const typename _Alty::value_type *&gt;::value</a>
+   161) <a name="l161" style="background-color: #ffffff">		&amp;&amp; is_same&lt;typename _Alty::reference,</a>
+   162) <a name="l162" style="background-color: #ffffff">			typename _Alty::value_type&amp;&gt;::value</a>
+   163) <a name="l163" style="background-color: #ffffff">		&amp;&amp; is_same&lt;typename _Alty::const_reference,</a>
+   164) <a name="l164" style="background-color: #ffffff">			const typename _Alty::value_type&amp;&gt;::value&gt;</a>
+   165) <a name="l165" style="background-color: #ffffff">	{	// tests if allocator has simple addressing</a>
+   166) <a name="l166" style="background-color: #ffffff">	};</a>
+   167) <a name="l167" style="background-color: #ffffff"></a>
+   168) <a name="l168" style="background-color: #ffffff">		// TEMPLATE CLASS _Simple_types</a>
+   169) <a name="l169" style="background-color: #ffffff">template&lt;class _Value_type&gt;</a>
+   170) <a name="l170" style="background-color: #ffffff">	struct _Simple_types</a>
+   171) <a name="l171" style="background-color: #ffffff">	{	// wraps types needed by iterators</a>
+   172) <a name="l172" style="background-color: #ffffff">	typedef _Value_type value_type;</a>
+   173) <a name="l173" style="background-color: #ffffff">	typedef size_t size_type;</a>
+   174) <a name="l174" style="background-color: #ffffff">	typedef ptrdiff_t difference_type;</a>
+   175) <a name="l175" style="background-color: #ffffff">	typedef value_type *pointer;</a>
+   176) <a name="l176" style="background-color: #ffffff">	typedef const value_type *const_pointer;</a>
+   177) <a name="l177" style="background-color: #ffffff">	typedef value_type&amp; reference;</a>
+   178) <a name="l178" style="background-color: #ffffff">	typedef const value_type&amp; const_reference;</a>
+   179) <a name="l179" style="background-color: #ffffff">	};</a>
+   180) <a name="l180" style="background-color: #ffffff"></a>
+   181) <a name="l181" style="background-color: #ffffff">		// TEMPLATE CLASS _Get_voidptr</a>
+   182) <a name="l182" style="background-color: #ffffff">template&lt;class _Alty,</a>
+   183) <a name="l183" style="background-color: #ffffff">	class _Pointer&gt;</a>
+   184) <a name="l184" style="background-color: #ffffff">	struct _Get_voidptr</a>
+   185) <a name="l185" style="background-color: #ffffff">	{	// get void pointer for allocator</a>
+   186) <a name="l186" style="background-color: #ffffff">	typedef typename _Alty::template rebind&lt;void&gt;::other _Alvoid;</a>
+   187) <a name="l187" style="background-color: #ffffff">	typedef typename _Alvoid::pointer type;</a>
+   188) <a name="l188" style="background-color: #ffffff">	};</a>
+   189) <a name="l189" style="background-color: #ffffff"></a>
+   190) <a name="l190" style="background-color: #ffffff">template&lt;class _Alty,</a>
+   191) <a name="l191" style="background-color: #ffffff">	class _Ty&gt;</a>
+   192) <a name="l192" style="background-color: #ffffff">	struct _Get_voidptr&lt;_Alty, _Ty *&gt;</a>
+   193) <a name="l193" style="background-color: #ffffff">	{	// get raw void pointer for allocator</a>
+   194) <a name="l194" style="background-color: #ffffff">	typedef void *type;</a>
+   195) <a name="l195" style="background-color: #ffffff">	};</a>
+   196) <a name="l196" style="background-color: #ffffff"></a>
+   197) <a name="l197" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_first_parameter</a>
+   198) <a name="l198" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   199) <a name="l199" style="background-color: #ffffff">	struct _Get_first_parameter;</a>
+   200) <a name="l200" style="background-color: #ffffff"></a>
+   201) <a name="l201" style="background-color: #ffffff">template&lt;template&lt;class, class...&gt; class _Ty,</a>
+   202) <a name="l202" style="background-color: #ffffff">	class _First,</a>
+   203) <a name="l203" style="background-color: #ffffff">	class... _Rest&gt;</a>
+   204) <a name="l204" style="background-color: #ffffff">	struct _Get_first_parameter&lt;_Ty&lt;_First, _Rest...&gt; &gt;</a>
+   205) <a name="l205" style="background-color: #ffffff">	{	// given _Ty&lt;_First, _Rest...&gt;, extract _First</a>
+   206) <a name="l206" style="background-color: #ffffff">	typedef _First type;</a>
+   207) <a name="l207" style="background-color: #ffffff">	};</a>
+   208) <a name="l208" style="background-color: #ffffff"></a>
+   209) <a name="l209" style="background-color: #ffffff">		// TEMPLATE STRUCT _Replace_first_parameter</a>
+   210) <a name="l210" style="background-color: #ffffff">template&lt;class _Newfirst,</a>
+   211) <a name="l211" style="background-color: #ffffff">	class _Ty&gt;</a>
+   212) <a name="l212" style="background-color: #ffffff">	struct _Replace_first_parameter;</a>
+   213) <a name="l213" style="background-color: #ffffff"></a>
+   214) <a name="l214" style="background-color: #ffffff">template&lt;class _Newfirst,</a>
+   215) <a name="l215" style="background-color: #ffffff">	template&lt;class, class...&gt; class _Ty,</a>
+   216) <a name="l216" style="background-color: #ffffff">	class _First,</a>
+   217) <a name="l217" style="background-color: #ffffff">	class... _Rest&gt;</a>
+   218) <a name="l218" style="background-color: #ffffff">	struct _Replace_first_parameter&lt;_Newfirst, _Ty&lt;_First, _Rest...&gt; &gt;</a>
+   219) <a name="l219" style="background-color: #ffffff">	{	// given _Ty&lt;_First, _Rest...&gt;, replace _First</a>
+   220) <a name="l220" style="background-color: #ffffff">	typedef _Ty&lt;_Newfirst, _Rest...&gt; type;</a>
+   221) <a name="l221" style="background-color: #ffffff">	};</a>
+   222) <a name="l222" style="background-color: #ffffff"></a>
+   223) <a name="l223" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_element_type</a>
+   224) <a name="l224" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   225) <a name="l225" style="background-color: #ffffff">	struct _Get_element_type</a>
+   226) <a name="l226" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(element_type,</a>
+   227) <a name="l227" style="background-color: #ffffff">		typename _Get_first_parameter&lt;_Uty&gt;::type);</a>
+   228) <a name="l228" style="background-color: #ffffff"></a>
+   229) <a name="l229" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_ptr_difference_type</a>
+   230) <a name="l230" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   231) <a name="l231" style="background-color: #ffffff">	struct _Get_ptr_difference_type</a>
+   232) <a name="l232" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(difference_type,</a>
+   233) <a name="l233" style="background-color: #ffffff">		ptrdiff_t);</a>
+   234) <a name="l234" style="background-color: #ffffff"></a>
+   235) <a name="l235" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_rebind_type</a>
+   236) <a name="l236" style="background-color: #ffffff">template&lt;class _Ty,</a>
+   237) <a name="l237" style="background-color: #ffffff">	class _Other&gt;</a>
+   238) <a name="l238" style="background-color: #ffffff">	struct _Get_rebind_type</a>
+   239) <a name="l239" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(template rebind&lt;_Other&gt;::other,</a>
+   240) <a name="l240" style="background-color: #ffffff">		typename _Replace_first_parameter&lt;_Other _COMMA _Uty&gt;::type);</a>
+   241) <a name="l241" style="background-color: #ffffff"></a>
+   242) <a name="l242" style="background-color: #ffffff">		// TEMPLATE CLASS pointer_traits</a>
+   243) <a name="l243" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   244) <a name="l244" style="background-color: #ffffff">	struct pointer_traits</a>
+   245) <a name="l245" style="background-color: #ffffff">	{	// defines traits for arbitrary pointers</a>
+   246) <a name="l246" style="background-color: #ffffff">	typedef typename _Get_element_type&lt;_Ty&gt;::type element_type;</a>
+   247) <a name="l247" style="background-color: #ffffff">	typedef _Ty pointer;</a>
+   248) <a name="l248" style="background-color: #ffffff">	typedef typename _Get_ptr_difference_type&lt;_Ty&gt;::type difference_type;</a>
+   249) <a name="l249" style="background-color: #ffffff"></a>
+   250) <a name="l250" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   251) <a name="l251" style="background-color: #ffffff">		using rebind = typename _Get_rebind_type&lt;_Ty, _Other&gt;::type;</a>
+   252) <a name="l252" style="background-color: #ffffff"></a>
+   253) <a name="l253" style="background-color: #ffffff">	typedef typename _If&lt;is_void&lt;element_type&gt;::value,</a>
+   254) <a name="l254" style="background-color: #ffffff">		char&amp;,</a>
+   255) <a name="l255" style="background-color: #ffffff">		typename add_lvalue_reference&lt;element_type&gt;::type&gt;::type _Reftype;</a>
+   256) <a name="l256" style="background-color: #ffffff"></a>
+   257) <a name="l257" style="background-color: #ffffff">	static pointer pointer_to(_Reftype _Val)</a>
+   258) <a name="l258" style="background-color: #ffffff">		{	// convert raw reference to pointer</a>
+   259) <a name="l259" style="background-color: #ffffff">		return (_Ty::pointer_to(_Val));</a>
+   260) <a name="l260" style="background-color: #ffffff">		}</a>
+   261) <a name="l261" style="background-color: #ffffff">	};</a>
+   262) <a name="l262" style="background-color: #ffffff"></a>
+   263) <a name="l263" style="background-color: #ffffff">		// TEMPLATE CLASS pointer_traits&lt;_Ty *&gt;</a>
+   264) <a name="l264" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   265) <a name="l265" style="background-color: #ffffff">	struct pointer_traits&lt;_Ty *&gt;</a>
+   266) <a name="l266" style="background-color: #ffffff">	{	// defines traits for raw pointers</a>
+   267) <a name="l267" style="background-color: #ffffff">	typedef _Ty element_type;</a>
+   268) <a name="l268" style="background-color: #ffffff">	typedef _Ty *pointer;</a>
+   269) <a name="l269" style="background-color: #ffffff">	typedef ptrdiff_t difference_type;</a>
+   270) <a name="l270" style="background-color: #ffffff"></a>
+   271) <a name="l271" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   272) <a name="l272" style="background-color: #ffffff">		using rebind = _Other *;</a>
+   273) <a name="l273" style="background-color: #ffffff"></a>
+   274) <a name="l274" style="background-color: #ffffff">	typedef typename _If&lt;is_void&lt;_Ty&gt;::value,</a>
+   275) <a name="l275" style="background-color: #ffffff">		char&amp;,</a>
+   276) <a name="l276" style="background-color: #ffffff">		typename add_lvalue_reference&lt;_Ty&gt;::type&gt;::type _Reftype;</a>
+   277) <a name="l277" style="background-color: #ffffff"></a>
+   278) <a name="l278" style="background-color: #ffffff">	static pointer pointer_to(_Reftype _Val)</a>
+   279) <a name="l279" style="background-color: #ffffff">		{	// convert raw reference to pointer</a>
+   280) <a name="l280" style="background-color: #ffffff">		return (_STD addressof(_Val));</a>
+   281) <a name="l281" style="background-color: #ffffff">		}</a>
+   282) <a name="l282" style="background-color: #ffffff">	};</a>
+   283) <a name="l283" style="background-color: #ffffff"></a>
+   284) <a name="l284" style="background-color: #ffffff"></a>
+   285) <a name="l285" style="background-color: #ffffff">		// TEMPLATE FUNCTION _Destroy</a>
+   286) <a name="l286" style="background-color: #ffffff">template&lt;class _Ptrty&gt; inline</a>
+   287) <a name="l287" style="background-color: #ffffff">	void _Destroy(_Ptrty _Ptr)</a>
+   288) <a name="l288" style="background-color: #ffffff">	{	// destroy object at _Ptr</a>
+   289) <a name="l289" style="background-color: #ffffff">	typedef typename pointer_traits&lt;_Ptrty&gt;::element_type _Ty;</a>
+   290) <a name="l290" style="background-color: #ffffff">	_Ptr-&gt;~_Ty();</a>
+   291) <a name="l291" style="background-color: #ffffff">	}</a>
+   292) <a name="l292" style="background-color: #ffffff"></a>
+   293) <a name="l293" style="background-color: #ffffff">		// FUNCTION TEMPLATE _Const_cast</a>
+   294) <a name="l294" style="background-color: #ffffff">template&lt;class _Ptrty&gt; inline</a>
+   295) <a name="l295" style="background-color: #ffffff">	auto _Const_cast(_Ptrty _Ptr)</a>
+   296) <a name="l296" style="background-color: #ffffff">	{	// remove constness from a fancy pointer</a>
+   297) <a name="l297" style="background-color: #ffffff">	using _Elem = typename pointer_traits&lt;_Ptrty&gt;::element_type;</a>
+   298) <a name="l298" style="background-color: #ffffff">	using _Modifiable = remove_const_t&lt;_Elem&gt;;</a>
+   299) <a name="l299" style="background-color: #ffffff">	using _Dest = typename pointer_traits&lt;_Ptrty&gt;::template rebind&lt;_Modifiable&gt;;</a>
+   300) <a name="l300" style="background-color: #ffffff"></a>
+   301) <a name="l301" style="background-color: #ffffff">	return (pointer_traits&lt;_Dest&gt;::pointer_to(const_cast&lt;_Modifiable&amp;&gt;(*_Ptr)));</a>
+   302) <a name="l302" style="background-color: #ffffff">	}</a>
+   303) <a name="l303" style="background-color: #ffffff"></a>
+   304) <a name="l304" style="background-color: #ffffff">template&lt;class _Ty&gt; inline</a>
+   305) <a name="l305" style="background-color: #ffffff">	auto _Const_cast(_Ty * _Ptr)</a>
+   306) <a name="l306" style="background-color: #ffffff">	{	// remove constness from a plain pointer</a>
+   307) <a name="l307" style="background-color: #ffffff">	return (const_cast&lt;remove_const_t&lt;_Ty&gt; *&gt;(_Ptr));</a>
+   308) <a name="l308" style="background-color: #ffffff">	}</a>
+   309) <a name="l309" style="background-color: #ffffff"></a>
+   310) <a name="l310" style="background-color: #ffffff"></a>
+   311) <a name="l311" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_pointer_type</a>
+   312) <a name="l312" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   313) <a name="l313" style="background-color: #ffffff">	struct _Get_pointer_type</a>
+   314) <a name="l314" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(pointer,</a>
+   315) <a name="l315" style="background-color: #ffffff">		typename _Ty::value_type *);</a>
+   316) <a name="l316" style="background-color: #ffffff"></a>
+   317) <a name="l317" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_const_pointer_type</a>
+   318) <a name="l318" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   319) <a name="l319" style="background-color: #ffffff">	struct _Get_const_pointer_type</a>
+   320) <a name="l320" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(const_pointer,</a>
+   321) <a name="l321" style="background-color: #ffffff">		typename pointer_traits&lt;typename _Get_pointer_type&lt;_Ty&gt;::type&gt;</a>
+   322) <a name="l322" style="background-color: #ffffff">			::template rebind&lt;const typename _Ty::value_type&gt;);</a>
+   323) <a name="l323" style="background-color: #ffffff"></a>
+   324) <a name="l324" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_void_pointer_type</a>
+   325) <a name="l325" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   326) <a name="l326" style="background-color: #ffffff">	struct _Get_void_pointer_type</a>
+   327) <a name="l327" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(void_pointer,</a>
+   328) <a name="l328" style="background-color: #ffffff">		typename pointer_traits&lt;typename _Get_pointer_type&lt;_Ty&gt;::type&gt;</a>
+   329) <a name="l329" style="background-color: #ffffff">			::template rebind&lt;void&gt;);</a>
+   330) <a name="l330" style="background-color: #ffffff"></a>
+   331) <a name="l331" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_const_void_pointer_type</a>
+   332) <a name="l332" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   333) <a name="l333" style="background-color: #ffffff">	struct _Get_const_void_pointer_type</a>
+   334) <a name="l334" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(const_void_pointer,</a>
+   335) <a name="l335" style="background-color: #ffffff">		typename pointer_traits&lt;typename _Get_pointer_type&lt;_Ty&gt;::type&gt;</a>
+   336) <a name="l336" style="background-color: #ffffff">			::template rebind&lt;const void&gt;);</a>
+   337) <a name="l337" style="background-color: #ffffff"></a>
+   338) <a name="l338" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_difference_type</a>
+   339) <a name="l339" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   340) <a name="l340" style="background-color: #ffffff">	struct _Get_difference_type</a>
+   341) <a name="l341" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(difference_type,</a>
+   342) <a name="l342" style="background-color: #ffffff">		typename _Get_ptr_difference_type&lt;</a>
+   343) <a name="l343" style="background-color: #ffffff">			typename _Get_pointer_type&lt;_Ty&gt;::type&gt;::type);</a>
+   344) <a name="l344" style="background-color: #ffffff"></a>
+   345) <a name="l345" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_size_type</a>
+   346) <a name="l346" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   347) <a name="l347" style="background-color: #ffffff">	struct _Get_size_type</a>
+   348) <a name="l348" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(size_type,</a>
+   349) <a name="l349" style="background-color: #ffffff">		typename make_unsigned&lt;</a>
+   350) <a name="l350" style="background-color: #ffffff">			typename _Get_difference_type&lt;_Ty&gt;::type&gt;::type);</a>
+   351) <a name="l351" style="background-color: #ffffff"></a>
+   352) <a name="l352" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_propagate_on_container_copy</a>
+   353) <a name="l353" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   354) <a name="l354" style="background-color: #ffffff">	struct _Get_propagate_on_container_copy</a>
+   355) <a name="l355" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(propagate_on_container_copy_assignment,</a>
+   356) <a name="l356" style="background-color: #ffffff">		false_type);</a>
+   357) <a name="l357" style="background-color: #ffffff"></a>
+   358) <a name="l358" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_propagate_on_container_move</a>
+   359) <a name="l359" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   360) <a name="l360" style="background-color: #ffffff">	struct _Get_propagate_on_container_move</a>
+   361) <a name="l361" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(propagate_on_container_move_assignment,</a>
+   362) <a name="l362" style="background-color: #ffffff">		false_type);</a>
+   363) <a name="l363" style="background-color: #ffffff"></a>
+   364) <a name="l364" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_propagate_on_container_swap</a>
+   365) <a name="l365" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   366) <a name="l366" style="background-color: #ffffff">	struct _Get_propagate_on_container_swap</a>
+   367) <a name="l367" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(propagate_on_container_swap,</a>
+   368) <a name="l368" style="background-color: #ffffff">		false_type);</a>
+   369) <a name="l369" style="background-color: #ffffff"></a>
+   370) <a name="l370" style="background-color: #ffffff">		// TEMPLATE STRUCT _Get_is_always_equal</a>
+   371) <a name="l371" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   372) <a name="l372" style="background-color: #ffffff">	struct _Get_is_always_equal</a>
+   373) <a name="l373" style="background-color: #ffffff">	_GET_TYPE_OR_DEFAULT(is_always_equal,</a>
+   374) <a name="l374" style="background-color: #ffffff">		typename is_empty&lt;_Ty&gt;::type);</a>
+   375) <a name="l375" style="background-color: #ffffff"></a>
+   376) <a name="l376" style="background-color: #ffffff">		// STRUCT TEMPLATE _Unwrap_alloc</a>
+   377) <a name="l377" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   378) <a name="l378" style="background-color: #ffffff">	class allocator;</a>
+   379) <a name="l379" style="background-color: #ffffff">template&lt;class _Alloc&gt;</a>
+   380) <a name="l380" style="background-color: #ffffff">	struct _Wrap_alloc;</a>
+   381) <a name="l381" style="background-color: #ffffff"></a>
+   382) <a name="l382" style="background-color: #ffffff">template&lt;class _Alloc&gt;</a>
+   383) <a name="l383" style="background-color: #ffffff">	struct _Unwrap_alloc</a>
+   384) <a name="l384" style="background-color: #ffffff">	{	// extracts a wrapped allocator type if it is wrapped; otherwise, passes it through unchanged</a>
+   385) <a name="l385" style="background-color: #ffffff">	typedef _Alloc type;</a>
+   386) <a name="l386" style="background-color: #ffffff">	};</a>
+   387) <a name="l387" style="background-color: #ffffff"></a>
+   388) <a name="l388" style="background-color: #ffffff">template&lt;class _Alloc&gt;</a>
+   389) <a name="l389" style="background-color: #ffffff">	struct _Unwrap_alloc&lt;_Wrap_alloc&lt;_Alloc&gt;&gt;</a>
+   390) <a name="l390" style="background-color: #ffffff">	{	// extracts a wrapped allocator type if it is wrapped; otherwise, passes it through unchanged</a>
+   391) <a name="l391" style="background-color: #ffffff">	typedef _Alloc type;</a>
+   392) <a name="l392" style="background-color: #ffffff">	};</a>
+   393) <a name="l393" style="background-color: #ffffff"></a>
+   394) <a name="l394" style="background-color: #ffffff"></a>
+   395) <a name="l395" style="background-color: #ffffff">		// ALIAS TEMPLATE _Unwrap_alloc_t</a>
+   396) <a name="l396" style="background-color: #ffffff">template&lt;class _Alloc&gt;</a>
+   397) <a name="l397" style="background-color: #ffffff">	using _Unwrap_alloc_t = typename _Unwrap_alloc&lt;_Alloc&gt;::type;</a>
+   398) <a name="l398" style="background-color: #ffffff"></a>
+   399) <a name="l399" style="background-color: #ffffff"></a>
+   400) <a name="l400" style="background-color: #ffffff">		// STRUCT TEMPLATE _Is_default_allocator</a>
+   401) <a name="l401" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+   402) <a name="l402" style="background-color: #ffffff">	class = void&gt;</a>
+   403) <a name="l403" style="background-color: #ffffff">	struct _Is_default_allocator</a>
+   404) <a name="l404" style="background-color: #ffffff">		: false_type</a>
+   405) <a name="l405" style="background-color: #ffffff">	{	// tests whether _Alloc is non-specialized default allocator (N4582 20.9.9 [default.allocator])</a>
+   406) <a name="l406" style="background-color: #ffffff">	};</a>
+   407) <a name="l407" style="background-color: #ffffff"></a>
+   408) <a name="l408" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   409) <a name="l409" style="background-color: #ffffff">	struct _Is_default_allocator&lt;allocator&lt;_Ty&gt;, typename allocator&lt;_Ty&gt;::_Not_user_specialized&gt;</a>
+   410) <a name="l410" style="background-color: #ffffff">		: true_type</a>
+   411) <a name="l411" style="background-color: #ffffff">	{	// tests whether _Alloc is non-specialized default allocator (N4582 20.9.9 [default.allocator])</a>
+   412) <a name="l412" style="background-color: #ffffff">	};</a>
+   413) <a name="l413" style="background-color: #ffffff"></a>
+   414) <a name="l414" style="background-color: #ffffff">		// STRUCT _Alloc_allocate</a>
+   415) <a name="l415" style="background-color: #ffffff">struct _Alloc_allocate</a>
+   416) <a name="l416" style="background-color: #ffffff">	{	// determines allocator_traits&lt;_Alloc&gt;</a>
+   417) <a name="l417" style="background-color: #ffffff">		// ::allocate(size_type, const_void_pointer)</a>
+   418) <a name="l418" style="background-color: #ffffff"></a>
+   419) <a name="l419" style="background-color: #ffffff">	template&lt;class _Alloc,</a>
+   420) <a name="l420" style="background-color: #ffffff">		class _Size_type,</a>
+   421) <a name="l421" style="background-color: #ffffff">		class _Const_void_pointer&gt;</a>
+   422) <a name="l422" style="background-color: #ffffff">		static auto _Fn(int, _Alloc&amp; _Al,</a>
+   423) <a name="l423" style="background-color: #ffffff">			_Size_type _Count,</a>
+   424) <a name="l424" style="background-color: #ffffff">			_Const_void_pointer _Hint)</a>
+   425) <a name="l425" style="background-color: #ffffff">			-&gt; decltype(_Al.allocate(_Count, _Hint))</a>
+   426) <a name="l426" style="background-color: #ffffff">		{	// call allocator supplied version</a>
+   427) <a name="l427" style="background-color: #ffffff">		return (_Al.allocate(_Count, _Hint));</a>
+   428) <a name="l428" style="background-color: #ffffff">		}</a>
+   429) <a name="l429" style="background-color: #ffffff"></a>
+   430) <a name="l430" style="background-color: #ffffff">	template&lt;class _Alloc,</a>
+   431) <a name="l431" style="background-color: #ffffff">		class _Size_type,</a>
+   432) <a name="l432" style="background-color: #ffffff">		class _Const_void_pointer&gt;</a>
+   433) <a name="l433" style="background-color: #ffffff">		static auto _Fn(_Wrap_int, _Alloc&amp; _Al,</a>
+   434) <a name="l434" style="background-color: #ffffff">			_Size_type _Count,</a>
+   435) <a name="l435" style="background-color: #ffffff">			_Const_void_pointer)</a>
+   436) <a name="l436" style="background-color: #ffffff">			-&gt; decltype(_Al.allocate(_Count))</a>
+   437) <a name="l437" style="background-color: #ffffff">		{	// call default version</a>
+   438) <a name="l438" style="background-color: #ffffff">		return (_Al.allocate(_Count));</a>
+   439) <a name="l439" style="background-color: #ffffff">		}</a>
+   440) <a name="l440" style="background-color: #ffffff">	};</a>
+   441) <a name="l441" style="background-color: #ffffff"></a>
+   442) <a name="l442" style="background-color: #ffffff">		// ALIAS TEMPLATES _Uses_default_construct AND _Uses_default_construct_t</a>
+   443) <a name="l443" style="background-color: #ffffff">struct _Has_no_alloc_construct_tag</a>
+   444) <a name="l444" style="background-color: #ffffff">	{	// TRANSITION, C1XX</a>
+   445) <a name="l445" style="background-color: #ffffff">	};</a>
+   446) <a name="l446" style="background-color: #ffffff"></a>
+   447) <a name="l447" style="background-color: #ffffff">template&lt;class _Void,</a>
+   448) <a name="l448" style="background-color: #ffffff">	class... _Types&gt;</a>
+   449) <a name="l449" style="background-color: #ffffff">	struct _Has_no_alloc_construct</a>
+   450) <a name="l450" style="background-color: #ffffff">		: true_type</a>
+   451) <a name="l451" style="background-color: #ffffff">	{	// determines whether _Alloc has no construct</a>
+   452) <a name="l452" style="background-color: #ffffff">	};</a>
+   453) <a name="l453" style="background-color: #ffffff"></a>
+   454) <a name="l454" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+   455) <a name="l455" style="background-color: #ffffff">	class _Ptr,</a>
+   456) <a name="l456" style="background-color: #ffffff">	class... _Args&gt;</a>
+   457) <a name="l457" style="background-color: #ffffff">	struct _Has_no_alloc_construct&lt;</a>
+   458) <a name="l458" style="background-color: #ffffff">		void_t&lt;</a>
+   459) <a name="l459" style="background-color: #ffffff">			_Has_no_alloc_construct_tag,	// TRANSITION, C1XX</a>
+   460) <a name="l460" style="background-color: #ffffff">			decltype(_STD declval&lt;_Alloc&amp;&gt;().construct(_STD declval&lt;_Ptr&gt;(), _STD declval&lt;_Args&gt;()...))&gt;,</a>
+   461) <a name="l461" style="background-color: #ffffff">		_Alloc, _Ptr, _Args...&gt;</a>
+   462) <a name="l462" style="background-color: #ffffff">		: false_type</a>
+   463) <a name="l463" style="background-color: #ffffff">	{	// determines whether _Alloc has no construct</a>
+   464) <a name="l464" style="background-color: #ffffff">	};</a>
+   465) <a name="l465" style="background-color: #ffffff"></a>
+   466) <a name="l466" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+   467) <a name="l467" style="background-color: #ffffff">	class _Ptr,</a>
+   468) <a name="l468" style="background-color: #ffffff">	class... _Args&gt;</a>
+   469) <a name="l469" style="background-color: #ffffff">	using _Uses_default_construct = disjunction&lt;</a>
+   470) <a name="l470" style="background-color: #ffffff">		_Is_default_allocator&lt;_Alloc&gt;,</a>
+   471) <a name="l471" style="background-color: #ffffff">		_Has_no_alloc_construct&lt;void, _Alloc, _Ptr, _Args...&gt;&gt;;</a>
+   472) <a name="l472" style="background-color: #ffffff"></a>
+   473) <a name="l473" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+   474) <a name="l474" style="background-color: #ffffff">	class _Ptr,</a>
+   475) <a name="l475" style="background-color: #ffffff">	class... _Args&gt;</a>
+   476) <a name="l476" style="background-color: #ffffff">	using _Uses_default_construct_t = typename _Uses_default_construct&lt;_Alloc, _Ptr, _Args...&gt;::type;</a>
+   477) <a name="l477" style="background-color: #ffffff"></a>
+   478) <a name="l478" style="background-color: #ffffff"></a>
+   479) <a name="l479" style="background-color: #ffffff">		// ALIAS TEMPLATE _Uses_default_destroy AND _Uses_default_destroy_t</a>
+   480) <a name="l480" style="background-color: #ffffff">struct _Has_no_alloc_destroy_tag</a>
+   481) <a name="l481" style="background-color: #ffffff">	{	// TRANSITION, C1XX</a>
+   482) <a name="l482" style="background-color: #ffffff">	};</a>
+   483) <a name="l483" style="background-color: #ffffff"></a>
+   484) <a name="l484" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+   485) <a name="l485" style="background-color: #ffffff">	class _Ptr,</a>
+   486) <a name="l486" style="background-color: #ffffff">	class = void&gt;</a>
+   487) <a name="l487" style="background-color: #ffffff">	struct _Has_no_alloc_destroy</a>
+   488) <a name="l488" style="background-color: #ffffff">		: true_type</a>
+   489) <a name="l489" style="background-color: #ffffff">	{	// determines whether _Alloc has no destroy</a>
+   490) <a name="l490" style="background-color: #ffffff">	};</a>
+   491) <a name="l491" style="background-color: #ffffff"></a>
+   492) <a name="l492" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+   493) <a name="l493" style="background-color: #ffffff">	class _Ptr&gt;</a>
+   494) <a name="l494" style="background-color: #ffffff">	struct _Has_no_alloc_destroy&lt;_Alloc, _Ptr, void_t&lt;</a>
+   495) <a name="l495" style="background-color: #ffffff">			_Has_no_alloc_destroy_tag,	// TRANSITION, C1XX</a>
+   496) <a name="l496" style="background-color: #ffffff">			decltype(_STD declval&lt;_Alloc&amp;&gt;().destroy(_STD declval&lt;_Ptr&gt;()))&gt;&gt;</a>
+   497) <a name="l497" style="background-color: #ffffff">		: false_type</a>
+   498) <a name="l498" style="background-color: #ffffff">	{	// determines whether _Alloc has no destroy</a>
+   499) <a name="l499" style="background-color: #ffffff">	};</a>
+   500) <a name="l500" style="background-color: #ffffff"></a>
+   501) <a name="l501" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+   502) <a name="l502" style="background-color: #ffffff">	class _Ptr&gt;</a>
+   503) <a name="l503" style="background-color: #ffffff">	using _Uses_default_destroy = disjunction&lt;</a>
+   504) <a name="l504" style="background-color: #ffffff">		_Is_default_allocator&lt;_Alloc&gt;,</a>
+   505) <a name="l505" style="background-color: #ffffff">		_Has_no_alloc_destroy&lt;_Alloc, _Ptr&gt;&gt;;</a>
+   506) <a name="l506" style="background-color: #ffffff"></a>
+   507) <a name="l507" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+   508) <a name="l508" style="background-color: #ffffff">	class _Ptr&gt;</a>
+   509) <a name="l509" style="background-color: #ffffff">	using _Uses_default_destroy_t = typename _Uses_default_destroy&lt;_Alloc, _Ptr&gt;::type;</a>
+   510) <a name="l510" style="background-color: #ffffff"></a>
+   511) <a name="l511" style="background-color: #ffffff"></a>
+   512) <a name="l512" style="background-color: #ffffff">		// STRUCT _Alloc_max_size</a>
+   513) <a name="l513" style="background-color: #ffffff">struct _Alloc_max_size</a>
+   514) <a name="l514" style="background-color: #ffffff">	{	// determines allocator_traits&lt;_Ty&gt;::max_size(const _Ty&amp;)</a>
+   515) <a name="l515" style="background-color: #ffffff">	template&lt;class _Ty&gt;</a>
+   516) <a name="l516" style="background-color: #ffffff">		static auto _Fn(int, const _Ty&amp; _Al) _NOEXCEPT</a>
+   517) <a name="l517" style="background-color: #ffffff">			-&gt; decltype(_Al.max_size())</a>
+   518) <a name="l518" style="background-color: #ffffff">		{	// call allocator supplied version</a>
+   519) <a name="l519" style="background-color: #ffffff">		return (_Al.max_size());</a>
+   520) <a name="l520" style="background-color: #ffffff">		}</a>
+   521) <a name="l521" style="background-color: #ffffff"></a>
+   522) <a name="l522" style="background-color: #ffffff">	template&lt;class _Ty&gt;</a>
+   523) <a name="l523" style="background-color: #ffffff">		static auto _Fn(_Wrap_int, const _Ty&amp;) _NOEXCEPT</a>
+   524) <a name="l524" style="background-color: #ffffff">			-&gt; typename _Get_size_type&lt;_Ty&gt;::type</a>
+   525) <a name="l525" style="background-color: #ffffff">		{	// call default version</a>
+   526) <a name="l526" style="background-color: #ffffff">		return ((numeric_limits&lt;typename _Get_size_type&lt;_Ty&gt;::type&gt;::max)()</a>
+   527) <a name="l527" style="background-color: #ffffff">			/ sizeof(typename _Ty::value_type));</a>
+   528) <a name="l528" style="background-color: #ffffff">		}</a>
+   529) <a name="l529" style="background-color: #ffffff">	};</a>
+   530) <a name="l530" style="background-color: #ffffff"></a>
+   531) <a name="l531" style="background-color: #ffffff">		// STRUCT _Alloc_select</a>
+   532) <a name="l532" style="background-color: #ffffff">struct _Alloc_select</a>
+   533) <a name="l533" style="background-color: #ffffff">	{	// determines allocator_traits&lt;_Ty&gt;</a>
+   534) <a name="l534" style="background-color: #ffffff">		// ::select_on_container_copy_construction(const _Alloc&amp;)</a>
+   535) <a name="l535" style="background-color: #ffffff"></a>
+   536) <a name="l536" style="background-color: #ffffff">	template&lt;class _Ty&gt;</a>
+   537) <a name="l537" style="background-color: #ffffff">		static auto _Fn(int, const _Ty&amp; _Al)</a>
+   538) <a name="l538" style="background-color: #ffffff">			-&gt; decltype((_Ty)_Al.select_on_container_copy_construction())</a>
+   539) <a name="l539" style="background-color: #ffffff">		{	// call allocator supplied version</a>
+   540) <a name="l540" style="background-color: #ffffff">		return (_Al.select_on_container_copy_construction());</a>
+   541) <a name="l541" style="background-color: #ffffff">		}</a>
+   542) <a name="l542" style="background-color: #ffffff"></a>
+   543) <a name="l543" style="background-color: #ffffff">	template&lt;class _Ty&gt;</a>
+   544) <a name="l544" style="background-color: #ffffff">		static auto _Fn(_Wrap_int, const _Ty&amp; _Al)</a>
+   545) <a name="l545" style="background-color: #ffffff">			-&gt; _Ty</a>
+   546) <a name="l546" style="background-color: #ffffff">		{	// call default version</a>
+   547) <a name="l547" style="background-color: #ffffff">		return (_Al);</a>
+   548) <a name="l548" style="background-color: #ffffff">		}</a>
+   549) <a name="l549" style="background-color: #ffffff">	};</a>
+   550) <a name="l550" style="background-color: #ffffff"></a>
+   551) <a name="l551" style="background-color: #ffffff">		// TEMPLATE CLASS allocator_traits</a>
+   552) <a name="l552" style="background-color: #ffffff">template&lt;class _Alloc&gt;</a>
+   553) <a name="l553" style="background-color: #ffffff">	struct allocator_traits</a>
+   554) <a name="l554" style="background-color: #ffffff">	{	// defines traits for allocators</a>
+   555) <a name="l555" style="background-color: #ffffff">	typedef _Alloc allocator_type;</a>
+   556) <a name="l556" style="background-color: #ffffff">	typedef typename _Alloc::value_type value_type;</a>
+   557) <a name="l557" style="background-color: #ffffff"></a>
+   558) <a name="l558" style="background-color: #ffffff">	typedef typename _Get_pointer_type&lt;_Alloc&gt;::type</a>
+   559) <a name="l559" style="background-color: #ffffff">		pointer;</a>
+   560) <a name="l560" style="background-color: #ffffff">	typedef typename _Get_const_pointer_type&lt;_Alloc&gt;::type</a>
+   561) <a name="l561" style="background-color: #ffffff">		const_pointer;</a>
+   562) <a name="l562" style="background-color: #ffffff">	typedef typename _Get_void_pointer_type&lt;_Alloc&gt;::type</a>
+   563) <a name="l563" style="background-color: #ffffff">		void_pointer;</a>
+   564) <a name="l564" style="background-color: #ffffff">	typedef typename _Get_const_void_pointer_type&lt;_Alloc&gt;::type</a>
+   565) <a name="l565" style="background-color: #ffffff">		const_void_pointer;</a>
+   566) <a name="l566" style="background-color: #ffffff"></a>
+   567) <a name="l567" style="background-color: #ffffff">	typedef typename _Get_size_type&lt;_Alloc&gt;::type size_type;</a>
+   568) <a name="l568" style="background-color: #ffffff">	typedef typename _Get_difference_type&lt;_Alloc&gt;::type difference_type;</a>
+   569) <a name="l569" style="background-color: #ffffff"></a>
+   570) <a name="l570" style="background-color: #ffffff">	typedef typename _Get_propagate_on_container_copy&lt;_Alloc&gt;::type</a>
+   571) <a name="l571" style="background-color: #ffffff">		propagate_on_container_copy_assignment;</a>
+   572) <a name="l572" style="background-color: #ffffff">	typedef typename _Get_propagate_on_container_move&lt;_Alloc&gt;::type</a>
+   573) <a name="l573" style="background-color: #ffffff">		propagate_on_container_move_assignment;</a>
+   574) <a name="l574" style="background-color: #ffffff">	typedef typename _Get_propagate_on_container_swap&lt;_Alloc&gt;::type</a>
+   575) <a name="l575" style="background-color: #ffffff">		propagate_on_container_swap;</a>
+   576) <a name="l576" style="background-color: #ffffff">	typedef typename _Get_is_always_equal&lt;_Alloc&gt;::type</a>
+   577) <a name="l577" style="background-color: #ffffff">		is_always_equal;</a>
+   578) <a name="l578" style="background-color: #ffffff"></a>
+   579) <a name="l579" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   580) <a name="l580" style="background-color: #ffffff">		using rebind_alloc = typename _Get_rebind_type&lt;_Alloc, _Other&gt;::type;</a>
+   581) <a name="l581" style="background-color: #ffffff"></a>
+   582) <a name="l582" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   583) <a name="l583" style="background-color: #ffffff">		using rebind_traits = allocator_traits&lt;rebind_alloc&lt;_Other&gt; &gt;;</a>
+   584) <a name="l584" style="background-color: #ffffff"></a>
+   585) <a name="l585" style="background-color: #ffffff">	static _DECLSPEC_ALLOCATOR pointer allocate(_Alloc&amp; _Al, size_type _Count)</a>
+   586) <a name="l586" style="background-color: #ffffff">		{	// allocate array of _Count elements</a>
+   587) <a name="l587" style="background-color: #ffffff">		return (_Al.allocate(_Count));</a>
+   588) <a name="l588" style="background-color: #ffffff">		}</a>
+   589) <a name="l589" style="background-color: #ffffff"></a>
+   590) <a name="l590" style="background-color: #ffffff">	static _DECLSPEC_ALLOCATOR pointer allocate(_Alloc&amp; _Al, size_type _Count,</a>
+   591) <a name="l591" style="background-color: #ffffff">		const_void_pointer _Hint)</a>
+   592) <a name="l592" style="background-color: #ffffff">		{	// allocate array of _Count elements, with hint</a>
+   593) <a name="l593" style="background-color: #ffffff">		return (_Alloc_allocate::_Fn(0, _Al, _Count, _Hint));</a>
+   594) <a name="l594" style="background-color: #ffffff">		}</a>
+   595) <a name="l595" style="background-color: #ffffff"></a>
+   596) <a name="l596" style="background-color: #ffffff">	static void deallocate(_Alloc&amp; _Al,</a>
+   597) <a name="l597" style="background-color: #ffffff">		pointer _Ptr, size_type _Count)</a>
+   598) <a name="l598" style="background-color: #ffffff">		{	// deallocate _Count elements at _Ptr</a>
+   599) <a name="l599" style="background-color: #ffffff">		_Al.deallocate(_Ptr, _Count);</a>
+   600) <a name="l600" style="background-color: #ffffff">		}</a>
+   601) <a name="l601" style="background-color: #ffffff"></a>
+   602) <a name="l602" style="background-color: #ffffff">	template&lt;class _Ty,</a>
+   603) <a name="l603" style="background-color: #ffffff">		class... _Types&gt;</a>
+   604) <a name="l604" style="background-color: #ffffff">		static void _Construct1(true_type, _Alloc&amp;, _Ty *_Ptr,</a>
+   605) <a name="l605" style="background-color: #ffffff">			_Types&amp;&amp;... _Args)</a>
+   606) <a name="l606" style="background-color: #ffffff">		{	// construct _Ty(_Types...) at _Ptr, default version</a>
+   607) <a name="l607" style="background-color: #ffffff">		::new (static_cast&lt;void *&gt;(_Ptr))</a>
+   608) <a name="l608" style="background-color: #ffffff">			_Ty(_STD forward&lt;_Types&gt;(_Args)...);</a>
+   609) <a name="l609" style="background-color: #ffffff">		}</a>
+   610) <a name="l610" style="background-color: #ffffff"></a>
+   611) <a name="l611" style="background-color: #ffffff">	template&lt;class _Ty,</a>
+   612) <a name="l612" style="background-color: #ffffff">		class... _Types&gt;</a>
+   613) <a name="l613" style="background-color: #ffffff">		static void _Construct1(false_type, _Alloc&amp; _Al, _Ty *_Ptr,</a>
+   614) <a name="l614" style="background-color: #ffffff">			_Types&amp;&amp;... _Args)</a>
+   615) <a name="l615" style="background-color: #ffffff">		{	// construct _Ty(_Types...) at _Ptr, allocator-supplied version</a>
+   616) <a name="l616" style="background-color: #ffffff">		_Al.construct(_Ptr, _STD forward&lt;_Types&gt;(_Args)...);</a>
+   617) <a name="l617" style="background-color: #ffffff">		}</a>
+   618) <a name="l618" style="background-color: #ffffff"></a>
+   619) <a name="l619" style="background-color: #ffffff">	template&lt;class _Ty,</a>
+   620) <a name="l620" style="background-color: #ffffff">		class... _Types&gt;</a>
+   621) <a name="l621" style="background-color: #ffffff">		static void construct(_Alloc&amp; _Al, _Ty *_Ptr,</a>
+   622) <a name="l622" style="background-color: #ffffff">			_Types&amp;&amp;... _Args)</a>
+   623) <a name="l623" style="background-color: #ffffff">		{	// construct _Ty(_Types...) at _Ptr</a>
+   624) <a name="l624" style="background-color: #ffffff">		_Construct1(_Uses_default_construct_t&lt;_Unwrap_alloc_t&lt;_Alloc&gt;, _Ty *, _Types...&gt;(),</a>
+   625) <a name="l625" style="background-color: #ffffff">			_Al, _Ptr, _STD forward&lt;_Types&gt;(_Args)...);</a>
+   626) <a name="l626" style="background-color: #ffffff">		}</a>
+   627) <a name="l627" style="background-color: #ffffff"></a>
+   628) <a name="l628" style="background-color: #ffffff">	template&lt;class _Ty&gt;</a>
+   629) <a name="l629" style="background-color: #ffffff">		static void _Destroy1(_Alloc&amp;, _Ty *_Ptr, true_type)</a>
+   630) <a name="l630" style="background-color: #ffffff">		{	// destroy object at _Ptr, default version</a>
+   631) <a name="l631" style="background-color: #ffffff">		_Ptr-&gt;~_Ty();</a>
+   632) <a name="l632" style="background-color: #ffffff">		}</a>
+   633) <a name="l633" style="background-color: #ffffff"></a>
+   634) <a name="l634" style="background-color: #ffffff">	template&lt;class _Ty&gt;</a>
+   635) <a name="l635" style="background-color: #ffffff">		static void _Destroy1(_Alloc&amp; _Al, _Ty *_Ptr, false_type)</a>
+   636) <a name="l636" style="background-color: #ffffff">		{	// destroy object at _Ptr, allocator-supplied version</a>
+   637) <a name="l637" style="background-color: #ffffff">		_Al.destroy(_Ptr);</a>
+   638) <a name="l638" style="background-color: #ffffff">		}</a>
+   639) <a name="l639" style="background-color: #ffffff"></a>
+   640) <a name="l640" style="background-color: #ffffff">	template&lt;class _Ty&gt;</a>
+   641) <a name="l641" style="background-color: #ffffff">		static void destroy(_Alloc&amp; _Al, _Ty *_Ptr)</a>
+   642) <a name="l642" style="background-color: #ffffff">		{	// destroy object at _Ptr</a>
+   643) <a name="l643" style="background-color: #ffffff">		_Destroy1(_Al, _Ptr, _Uses_default_destroy_t&lt;_Unwrap_alloc_t&lt;_Alloc&gt;, _Ty *&gt;());</a>
+   644) <a name="l644" style="background-color: #ffffff">		}</a>
+   645) <a name="l645" style="background-color: #ffffff"></a>
+   646) <a name="l646" style="background-color: #ffffff">	static size_type max_size(const _Alloc&amp; _Al) _NOEXCEPT</a>
+   647) <a name="l647" style="background-color: #ffffff">		{	// get maximum size</a>
+   648) <a name="l648" style="background-color: #ffffff">		return (_Alloc_max_size::_Fn(0, _Al));</a>
+   649) <a name="l649" style="background-color: #ffffff">		}</a>
+   650) <a name="l650" style="background-color: #ffffff"></a>
+   651) <a name="l651" style="background-color: #ffffff">	static _Alloc select_on_container_copy_construction(</a>
+   652) <a name="l652" style="background-color: #ffffff">		const _Alloc&amp; _Al)</a>
+   653) <a name="l653" style="background-color: #ffffff">		{	// get allocator to use</a>
+   654) <a name="l654" style="background-color: #ffffff">		return (_Alloc_select::_Fn(0, _Al));</a>
+   655) <a name="l655" style="background-color: #ffffff">		}</a>
+   656) <a name="l656" style="background-color: #ffffff">	};</a>
+   657) <a name="l657" style="background-color: #ffffff"></a>
+   658) <a name="l658" style="background-color: #ffffff">		// TEMPLATE CLASS allocator</a>
+   659) <a name="l659" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   660) <a name="l660" style="background-color: #ffffff">	class allocator</a>
+   661) <a name="l661" style="background-color: #ffffff">	{	// generic allocator for objects of class _Ty</a>
+   662) <a name="l662" style="background-color: #ffffff">public:</a>
+   663) <a name="l663" style="background-color: #ffffff">	static_assert(!is_const&lt;_Ty&gt;::value,</a>
+   664) <a name="l664" style="background-color: #ffffff">		&quot;The C++ Standard forbids containers of const elements &quot;</a>
+   665) <a name="l665" style="background-color: #ffffff">		&quot;because allocator&lt;const T&gt; is ill-formed.&quot;);</a>
+   666) <a name="l666" style="background-color: #ffffff"></a>
+   667) <a name="l667" style="background-color: #ffffff">	typedef void _Not_user_specialized;</a>
+   668) <a name="l668" style="background-color: #ffffff"></a>
+   669) <a name="l669" style="background-color: #ffffff">	typedef _Ty value_type;</a>
+   670) <a name="l670" style="background-color: #ffffff"></a>
+   671) <a name="l671" style="background-color: #ffffff">	typedef value_type *pointer;</a>
+   672) <a name="l672" style="background-color: #ffffff">	typedef const value_type *const_pointer;</a>
+   673) <a name="l673" style="background-color: #ffffff"></a>
+   674) <a name="l674" style="background-color: #ffffff">	typedef value_type&amp; reference;</a>
+   675) <a name="l675" style="background-color: #ffffff">	typedef const value_type&amp; const_reference;</a>
+   676) <a name="l676" style="background-color: #ffffff"></a>
+   677) <a name="l677" style="background-color: #ffffff">	typedef size_t size_type;</a>
+   678) <a name="l678" style="background-color: #ffffff">	typedef ptrdiff_t difference_type;</a>
+   679) <a name="l679" style="background-color: #ffffff"></a>
+   680) <a name="l680" style="background-color: #ffffff">	typedef true_type propagate_on_container_move_assignment;</a>
+   681) <a name="l681" style="background-color: #ffffff">	typedef true_type is_always_equal;</a>
+   682) <a name="l682" style="background-color: #ffffff"></a>
+   683) <a name="l683" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   684) <a name="l684" style="background-color: #ffffff">		struct rebind</a>
+   685) <a name="l685" style="background-color: #ffffff">		{	// convert this type to allocator&lt;_Other&gt;</a>
+   686) <a name="l686" style="background-color: #ffffff">		typedef allocator&lt;_Other&gt; other;</a>
+   687) <a name="l687" style="background-color: #ffffff">		};</a>
+   688) <a name="l688" style="background-color: #ffffff"></a>
+   689) <a name="l689" style="background-color: #ffffff">	pointer address(reference _Val) const _NOEXCEPT</a>
+   690) <a name="l690" style="background-color: #ffffff">		{	// return address of mutable _Val</a>
+   691) <a name="l691" style="background-color: #ffffff">		return (_STD addressof(_Val));</a>
+   692) <a name="l692" style="background-color: #ffffff">		}</a>
+   693) <a name="l693" style="background-color: #ffffff"></a>
+   694) <a name="l694" style="background-color: #ffffff">	const_pointer address(const_reference _Val) const _NOEXCEPT</a>
+   695) <a name="l695" style="background-color: #ffffff">		{	// return address of nonmutable _Val</a>
+   696) <a name="l696" style="background-color: #ffffff">		return (_STD addressof(_Val));</a>
+   697) <a name="l697" style="background-color: #ffffff">		}</a>
+   698) <a name="l698" style="background-color: #ffffff"></a>
+   699) <a name="l699" style="background-color: #ffffff">	allocator() _THROW0()</a>
+   700) <a name="l700" style="background-color: #ffffff">		{	// construct default allocator (do nothing)</a>
+   701) <a name="l701" style="background-color: #ffffff">		}</a>
+   702) <a name="l702" style="background-color: #ffffff"></a>
+   703) <a name="l703" style="background-color: #ffcccc">	allocator(const allocator&lt;_Ty&gt;&amp;) _THROW0()</a>
+   704) <a name="l704" style="background-color: #ffcccc">		{	// construct by copying (do nothing)</a>
+   705) <a name="l705" style="background-color: #ffcccc">		}</a>
+   706) <a name="l706" style="background-color: #ffffff"></a>
+   707) <a name="l707" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   708) <a name="l708" style="background-color: #ffffff">		allocator(const allocator&lt;_Other&gt;&amp;) _THROW0()</a>
+   709) <a name="l709" style="background-color: #ffffff">		{	// construct from a related allocator (do nothing)</a>
+   710) <a name="l710" style="background-color: #ffffff">		}</a>
+   711) <a name="l711" style="background-color: #ffffff"></a>
+   712) <a name="l712" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   713) <a name="l713" style="background-color: #ffffff">		allocator&lt;_Ty&gt;&amp; operator=(const allocator&lt;_Other&gt;&amp;)</a>
+   714) <a name="l714" style="background-color: #ffffff">		{	// assign from a related allocator (do nothing)</a>
+   715) <a name="l715" style="background-color: #ffffff">		return (*this);</a>
+   716) <a name="l716" style="background-color: #ffffff">		}</a>
+   717) <a name="l717" style="background-color: #ffffff"></a>
+   718) <a name="l718" style="background-color: #ffffff">	void deallocate(pointer _Ptr, size_type _Count)</a>
+   719) <a name="l719" style="background-color: #ffffff">		{	// deallocate object at _Ptr</a>
+   720) <a name="l720" style="background-color: #ffffff">		_Deallocate(_Ptr, _Count, sizeof (_Ty));</a>
+   721) <a name="l721" style="background-color: #ffffff">		}</a>
+   722) <a name="l722" style="background-color: #ffffff"></a>
+   723) <a name="l723" style="background-color: #ffffff">	_DECLSPEC_ALLOCATOR pointer allocate(size_type _Count)</a>
+   724) <a name="l724" style="background-color: #ffffff">		{	// allocate array of _Count elements</a>
+   725) <a name="l725" style="background-color: #ffffff">		return (static_cast&lt;pointer&gt;(_Allocate(_Count, sizeof (_Ty))));</a>
+   726) <a name="l726" style="background-color: #ffffff">		}</a>
+   727) <a name="l727" style="background-color: #ffffff"></a>
+   728) <a name="l728" style="background-color: #ffffff">	_DECLSPEC_ALLOCATOR pointer allocate(size_type _Count, const void *)</a>
+   729) <a name="l729" style="background-color: #ffffff">		{	// allocate array of _Count elements, ignore hint</a>
+   730) <a name="l730" style="background-color: #ffffff">		return (allocate(_Count));</a>
+   731) <a name="l731" style="background-color: #ffffff">		}</a>
+   732) <a name="l732" style="background-color: #ffffff"></a>
+   733) <a name="l733" style="background-color: #ffffff">	template&lt;class _Objty,</a>
+   734) <a name="l734" style="background-color: #ffffff">		class... _Types&gt;</a>
+   735) <a name="l735" style="background-color: #ffffff">		void construct(_Objty *_Ptr, _Types&amp;&amp;... _Args)</a>
+   736) <a name="l736" style="background-color: #ffffff">		{	// construct _Objty(_Types...) at _Ptr</a>
+   737) <a name="l737" style="background-color: #fafad2">		::new ((void *)_Ptr) _Objty(_STD forward&lt;_Types&gt;(_Args)...);</a>
+   738) <a name="l738" style="background-color: #ffffff">		}</a>
+   739) <a name="l739" style="background-color: #ffffff"></a>
+   740) <a name="l740" style="background-color: #ffffff"></a>
+   741) <a name="l741" style="background-color: #ffffff">	template&lt;class _Uty&gt;</a>
+   742) <a name="l742" style="background-color: #ffffff">		void destroy(_Uty *_Ptr)</a>
+   743) <a name="l743" style="background-color: #ffffff">		{	// destroy object at _Ptr</a>
+   744) <a name="l744" style="background-color: #ffffff">		_Ptr-&gt;~_Uty();</a>
+   745) <a name="l745" style="background-color: #ffffff">		}</a>
+   746) <a name="l746" style="background-color: #ffffff"></a>
+   747) <a name="l747" style="background-color: #ffffff">	size_t max_size() const _NOEXCEPT</a>
+   748) <a name="l748" style="background-color: #ffffff">		{	// estimate maximum array size</a>
+   749) <a name="l749" style="background-color: #ffffff">		return ((size_t)(-1) / sizeof (_Ty));</a>
+   750) <a name="l750" style="background-color: #ffffff">		}</a>
+   751) <a name="l751" style="background-color: #ffffff">	};</a>
+   752) <a name="l752" style="background-color: #ffffff"></a>
+   753) <a name="l753" style="background-color: #ffffff">		// CLASS allocator&lt;void&gt;</a>
+   754) <a name="l754" style="background-color: #ffffff">template&lt;&gt;</a>
+   755) <a name="l755" style="background-color: #ffffff">	class allocator&lt;void&gt;</a>
+   756) <a name="l756" style="background-color: #ffffff">	{	// generic allocator for type void</a>
+   757) <a name="l757" style="background-color: #ffffff">public:</a>
+   758) <a name="l758" style="background-color: #ffffff">	typedef void _Not_user_specialized;</a>
+   759) <a name="l759" style="background-color: #ffffff"></a>
+   760) <a name="l760" style="background-color: #ffffff">	typedef void value_type;</a>
+   761) <a name="l761" style="background-color: #ffffff"></a>
+   762) <a name="l762" style="background-color: #ffffff">	typedef void *pointer;</a>
+   763) <a name="l763" style="background-color: #ffffff">	typedef const void *const_pointer;</a>
+   764) <a name="l764" style="background-color: #ffffff"></a>
+   765) <a name="l765" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   766) <a name="l766" style="background-color: #ffffff">		struct rebind</a>
+   767) <a name="l767" style="background-color: #ffffff">		{	// convert this type to an allocator&lt;_Other&gt;</a>
+   768) <a name="l768" style="background-color: #ffffff">		typedef allocator&lt;_Other&gt; other;</a>
+   769) <a name="l769" style="background-color: #ffffff">		};</a>
+   770) <a name="l770" style="background-color: #ffffff"></a>
+   771) <a name="l771" style="background-color: #ffffff">	allocator() _THROW0()</a>
+   772) <a name="l772" style="background-color: #ffffff">		{	// construct default allocator (do nothing)</a>
+   773) <a name="l773" style="background-color: #ffffff">		}</a>
+   774) <a name="l774" style="background-color: #ffffff"></a>
+   775) <a name="l775" style="background-color: #ffffff">	allocator(const allocator&lt;void&gt;&amp;) _THROW0()</a>
+   776) <a name="l776" style="background-color: #ffffff">		{	// construct by copying (do nothing)</a>
+   777) <a name="l777" style="background-color: #ffffff">		}</a>
+   778) <a name="l778" style="background-color: #ffffff"></a>
+   779) <a name="l779" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   780) <a name="l780" style="background-color: #ffffff">		allocator(const allocator&lt;_Other&gt;&amp;) _THROW0()</a>
+   781) <a name="l781" style="background-color: #ffffff">		{	// construct from related allocator (do nothing)</a>
+   782) <a name="l782" style="background-color: #ffffff">		}</a>
+   783) <a name="l783" style="background-color: #ffffff"></a>
+   784) <a name="l784" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   785) <a name="l785" style="background-color: #ffffff">		allocator&lt;void&gt;&amp; operator=(const allocator&lt;_Other&gt;&amp;)</a>
+   786) <a name="l786" style="background-color: #ffffff">		{	// assign from a related allocator (do nothing)</a>
+   787) <a name="l787" style="background-color: #ffffff">		return (*this);</a>
+   788) <a name="l788" style="background-color: #ffffff">		}</a>
+   789) <a name="l789" style="background-color: #ffffff">	};</a>
+   790) <a name="l790" style="background-color: #ffffff"></a>
+   791) <a name="l791" style="background-color: #ffffff">template&lt;class _Ty,</a>
+   792) <a name="l792" style="background-color: #ffffff">	class _Other&gt; inline</a>
+   793) <a name="l793" style="background-color: #ffffff">	bool operator==(const allocator&lt;_Ty&gt;&amp;,</a>
+   794) <a name="l794" style="background-color: #ffffff">		const allocator&lt;_Other&gt;&amp;) _THROW0()</a>
+   795) <a name="l795" style="background-color: #ffffff">	{	// test for allocator equality</a>
+   796) <a name="l796" style="background-color: #ffffff">	return (true);</a>
+   797) <a name="l797" style="background-color: #ffffff">	}</a>
+   798) <a name="l798" style="background-color: #ffffff"></a>
+   799) <a name="l799" style="background-color: #ffffff">template&lt;class _Ty,</a>
+   800) <a name="l800" style="background-color: #ffffff">	class _Other&gt; inline</a>
+   801) <a name="l801" style="background-color: #ffffff">	bool operator!=(const allocator&lt;_Ty&gt;&amp; _Left,</a>
+   802) <a name="l802" style="background-color: #ffffff">		const allocator&lt;_Other&gt;&amp; _Right) _THROW0()</a>
+   803) <a name="l803" style="background-color: #ffffff">	{	// test for allocator inequality</a>
+   804) <a name="l804" style="background-color: #ffffff">	return (false);</a>
+   805) <a name="l805" style="background-color: #ffffff">	}</a>
+   806) <a name="l806" style="background-color: #ffffff"></a>
+   807) <a name="l807" style="background-color: #ffffff">		// TEMPLATE CLASS SPECIALIZATION allocator_traits</a>
+   808) <a name="l808" style="background-color: #ffffff">template&lt;class _Ty&gt;</a>
+   809) <a name="l809" style="background-color: #ffffff">	struct allocator_traits&lt;allocator&lt;_Ty&gt; &gt;</a>
+   810) <a name="l810" style="background-color: #ffffff">	{	// defines traits for allocators (increases compiler speed)</a>
+   811) <a name="l811" style="background-color: #ffffff">	typedef allocator&lt;_Ty&gt; _Alloc;</a>
+   812) <a name="l812" style="background-color: #ffffff"></a>
+   813) <a name="l813" style="background-color: #ffffff">	typedef _Alloc allocator_type;</a>
+   814) <a name="l814" style="background-color: #ffffff">	typedef _Ty value_type;</a>
+   815) <a name="l815" style="background-color: #ffffff"></a>
+   816) <a name="l816" style="background-color: #ffffff">	typedef value_type *pointer;</a>
+   817) <a name="l817" style="background-color: #ffffff">	typedef const value_type *const_pointer;</a>
+   818) <a name="l818" style="background-color: #ffffff">	typedef void *void_pointer;</a>
+   819) <a name="l819" style="background-color: #ffffff">	typedef const void *const_void_pointer;</a>
+   820) <a name="l820" style="background-color: #ffffff"></a>
+   821) <a name="l821" style="background-color: #ffffff">	typedef size_t size_type;</a>
+   822) <a name="l822" style="background-color: #ffffff">	typedef ptrdiff_t difference_type;</a>
+   823) <a name="l823" style="background-color: #ffffff"></a>
+   824) <a name="l824" style="background-color: #ffffff">	typedef false_type propagate_on_container_copy_assignment;</a>
+   825) <a name="l825" style="background-color: #ffffff">	typedef true_type propagate_on_container_move_assignment;</a>
+   826) <a name="l826" style="background-color: #ffffff">	typedef false_type propagate_on_container_swap;</a>
+   827) <a name="l827" style="background-color: #ffffff">	typedef true_type is_always_equal;</a>
+   828) <a name="l828" style="background-color: #ffffff"></a>
+   829) <a name="l829" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   830) <a name="l830" style="background-color: #ffffff">		using rebind_alloc = allocator&lt;_Other&gt;;</a>
+   831) <a name="l831" style="background-color: #ffffff"></a>
+   832) <a name="l832" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   833) <a name="l833" style="background-color: #ffffff">		using rebind_traits = allocator_traits&lt;allocator&lt;_Other&gt; &gt;;</a>
+   834) <a name="l834" style="background-color: #ffffff"></a>
+   835) <a name="l835" style="background-color: #ffffff">	static _DECLSPEC_ALLOCATOR pointer allocate(_Alloc&amp; _Al, size_type _Count)</a>
+   836) <a name="l836" style="background-color: #ffffff">		{	// allocate array of _Count elements</a>
+   837) <a name="l837" style="background-color: #ffffff">		return (_Al.allocate(_Count));</a>
+   838) <a name="l838" style="background-color: #ffffff">		}</a>
+   839) <a name="l839" style="background-color: #ffffff"></a>
+   840) <a name="l840" style="background-color: #ffffff">	static _DECLSPEC_ALLOCATOR pointer allocate(_Alloc&amp; _Al, size_type _Count,</a>
+   841) <a name="l841" style="background-color: #ffffff">		const_void_pointer _Hint)</a>
+   842) <a name="l842" style="background-color: #ffffff">		{	// allocate array of _Count elements, with hint</a>
+   843) <a name="l843" style="background-color: #ffffff">		return (_Al.allocate(_Count, _Hint));</a>
+   844) <a name="l844" style="background-color: #ffffff">		}</a>
+   845) <a name="l845" style="background-color: #ffffff"></a>
+   846) <a name="l846" style="background-color: #ffffff">	static void deallocate(_Alloc&amp; _Al,</a>
+   847) <a name="l847" style="background-color: #ffffff">		pointer _Ptr, size_type _Count)</a>
+   848) <a name="l848" style="background-color: #ffffff">		{	// deallocate _Count elements at _Ptr</a>
+   849) <a name="l849" style="background-color: #ffffff">		_Al.deallocate(_Ptr, _Count);</a>
+   850) <a name="l850" style="background-color: #ffffff">		}</a>
+   851) <a name="l851" style="background-color: #ffffff"></a>
+   852) <a name="l852" style="background-color: #ffffff">	template&lt;class _Objty,</a>
+   853) <a name="l853" style="background-color: #ffffff">		class... _Types&gt;</a>
+   854) <a name="l854" style="background-color: #ffffff">		static void construct(_Alloc&amp; _Al, _Objty *_Ptr,</a>
+   855) <a name="l855" style="background-color: #ffffff">			_Types&amp;&amp;... _Args)</a>
+   856) <a name="l856" style="background-color: #ffffff">		{	// construct _Objty(_Types...) at _Ptr</a>
+   857) <a name="l857" style="background-color: #ffffff">		_Al.construct(_Ptr, _STD forward&lt;_Types&gt;(_Args)...);</a>
+   858) <a name="l858" style="background-color: #ffffff">		}</a>
+   859) <a name="l859" style="background-color: #ffffff"></a>
+   860) <a name="l860" style="background-color: #ffffff"></a>
+   861) <a name="l861" style="background-color: #ffffff">	template&lt;class _Uty&gt;</a>
+   862) <a name="l862" style="background-color: #ffffff">		static void destroy(_Alloc&amp; _Al, _Uty *_Ptr)</a>
+   863) <a name="l863" style="background-color: #ffffff">		{	// destroy object at _Ptr</a>
+   864) <a name="l864" style="background-color: #ffffff">		_Al.destroy(_Ptr);</a>
+   865) <a name="l865" style="background-color: #ffffff">		}</a>
+   866) <a name="l866" style="background-color: #ffffff"></a>
+   867) <a name="l867" style="background-color: #ffffff">	static size_type max_size(const _Alloc&amp; _Al) _NOEXCEPT</a>
+   868) <a name="l868" style="background-color: #ffffff">		{	// get maximum size</a>
+   869) <a name="l869" style="background-color: #ffffff">		return (_Al.max_size());</a>
+   870) <a name="l870" style="background-color: #ffffff">		}</a>
+   871) <a name="l871" style="background-color: #ffffff"></a>
+   872) <a name="l872" style="background-color: #ffffff">	static _Alloc select_on_container_copy_construction(</a>
+   873) <a name="l873" style="background-color: #ffffff">		const _Alloc&amp; _Al)</a>
+   874) <a name="l874" style="background-color: #ffffff">		{	// get allocator to use</a>
+   875) <a name="l875" style="background-color: #ffffff">		return (_Al);</a>
+   876) <a name="l876" style="background-color: #ffffff">		}</a>
+   877) <a name="l877" style="background-color: #ffffff">	};</a>
+   878) <a name="l878" style="background-color: #ffffff"></a>
+   879) <a name="l879" style="background-color: #ffffff">		// TEMPLATE CLASS _Wrap_alloc</a>
+   880) <a name="l880" style="background-color: #ffffff">template&lt;class _Alloc&gt;</a>
+   881) <a name="l881" style="background-color: #ffffff">	struct _Wrap_alloc</a>
+   882) <a name="l882" style="background-color: #ffffff">		: public _Alloc</a>
+   883) <a name="l883" style="background-color: #ffffff">	{	// defines traits for allocators</a>
+   884) <a name="l884" style="background-color: #ffffff">	typedef _Alloc _Mybase;</a>
+   885) <a name="l885" style="background-color: #ffffff">	typedef allocator_traits&lt;_Alloc&gt; _Mytraits;</a>
+   886) <a name="l886" style="background-color: #ffffff"></a>
+   887) <a name="l887" style="background-color: #ffffff">	typedef typename _Mytraits::value_type value_type;</a>
+   888) <a name="l888" style="background-color: #ffffff"></a>
+   889) <a name="l889" style="background-color: #ffffff">	typedef typename _Mytraits::pointer pointer;</a>
+   890) <a name="l890" style="background-color: #ffffff">	typedef typename _Mytraits::const_pointer const_pointer;</a>
+   891) <a name="l891" style="background-color: #ffffff">	typedef typename _Mytraits::void_pointer void_pointer;</a>
+   892) <a name="l892" style="background-color: #ffffff">	typedef typename _Mytraits::const_void_pointer const_void_pointer;</a>
+   893) <a name="l893" style="background-color: #ffffff"></a>
+   894) <a name="l894" style="background-color: #ffffff">	typedef typename _If&lt;is_void&lt;value_type&gt;::value,</a>
+   895) <a name="l895" style="background-color: #ffffff">		int, value_type&gt;::type&amp; reference;</a>
+   896) <a name="l896" style="background-color: #ffffff">	typedef typename _If&lt;is_void&lt;const value_type&gt;::value,</a>
+   897) <a name="l897" style="background-color: #ffffff">		const int, const value_type&gt;::type&amp; const_reference;</a>
+   898) <a name="l898" style="background-color: #ffffff"></a>
+   899) <a name="l899" style="background-color: #ffffff">	typedef typename _Mytraits::size_type size_type;</a>
+   900) <a name="l900" style="background-color: #ffffff">	typedef typename _Mytraits::difference_type difference_type;</a>
+   901) <a name="l901" style="background-color: #ffffff"></a>
+   902) <a name="l902" style="background-color: #ffffff">	typedef typename _Mytraits::propagate_on_container_copy_assignment</a>
+   903) <a name="l903" style="background-color: #ffffff">		propagate_on_container_copy_assignment;</a>
+   904) <a name="l904" style="background-color: #ffffff">	typedef typename _Mytraits::propagate_on_container_move_assignment</a>
+   905) <a name="l905" style="background-color: #ffffff">		propagate_on_container_move_assignment;</a>
+   906) <a name="l906" style="background-color: #ffffff">	typedef typename _Mytraits::propagate_on_container_swap</a>
+   907) <a name="l907" style="background-color: #ffffff">		propagate_on_container_swap;</a>
+   908) <a name="l908" style="background-color: #ffffff">	typedef typename _Mytraits::is_always_equal</a>
+   909) <a name="l909" style="background-color: #ffffff">		is_always_equal;</a>
+   910) <a name="l910" style="background-color: #ffffff"></a>
+   911) <a name="l911" style="background-color: #ffffff">	_Wrap_alloc select_on_container_copy_construction(_Nil = _Nil()) const</a>
+   912) <a name="l912" style="background-color: #ffffff">		{	// get allocator to use</a>
+   913) <a name="l913" style="background-color: #ffffff">		return (_Mytraits::select_on_container_copy_construction(*this));</a>
+   914) <a name="l914" style="background-color: #ffffff">		}</a>
+   915) <a name="l915" style="background-color: #ffffff"></a>
+   916) <a name="l916" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   917) <a name="l917" style="background-color: #ffffff">		struct rebind</a>
+   918) <a name="l918" style="background-color: #ffffff">		{	// convert this type to allocator&lt;_Other&gt;</a>
+   919) <a name="l919" style="background-color: #ffffff">		typedef typename _Mytraits::template rebind_alloc&lt;_Other&gt;</a>
+   920) <a name="l920" style="background-color: #ffffff">			_Other_alloc;</a>
+   921) <a name="l921" style="background-color: #ffffff">		typedef _Wrap_alloc&lt;_Other_alloc&gt; other;</a>
+   922) <a name="l922" style="background-color: #ffffff">		};</a>
+   923) <a name="l923" style="background-color: #ffffff"></a>
+   924) <a name="l924" style="background-color: #ffffff">	pointer address(reference _Val) const</a>
+   925) <a name="l925" style="background-color: #ffffff">		{	// return address of mutable _Val</a>
+   926) <a name="l926" style="background-color: #ffffff">		return (pointer_traits&lt;pointer&gt;::pointer_to(_Val));</a>
+   927) <a name="l927" style="background-color: #ffffff">		}</a>
+   928) <a name="l928" style="background-color: #ffffff"></a>
+   929) <a name="l929" style="background-color: #ffffff">	const_pointer address(const_reference _Val) const</a>
+   930) <a name="l930" style="background-color: #ffffff">		{	// return address of nonmutable _Val</a>
+   931) <a name="l931" style="background-color: #ffffff">		return (pointer_traits&lt;const_pointer&gt;::pointer_to(_Val));</a>
+   932) <a name="l932" style="background-color: #ffffff">		}</a>
+   933) <a name="l933" style="background-color: #ffffff"></a>
+   934) <a name="l934" style="background-color: #ffffff">	_Wrap_alloc() _NOEXCEPT_OP(is_nothrow_default_constructible&lt;_Alloc&gt;::value)</a>
+   935) <a name="l935" style="background-color: #ffffff">		: _Mybase()</a>
+   936) <a name="l936" style="background-color: #ffffff">		{	// construct default allocator (do nothing)</a>
+   937) <a name="l937" style="background-color: #ffffff">		}</a>
+   938) <a name="l938" style="background-color: #ffffff"></a>
+   939) <a name="l939" style="background-color: #ffffff">	_Wrap_alloc(const _Wrap_alloc&amp; _Right) _THROW0()</a>
+   940) <a name="l940" style="background-color: #ffffff">		: _Mybase(_Right)</a>
+   941) <a name="l941" style="background-color: #ffffff">		{	// construct by copying</a>
+   942) <a name="l942" style="background-color: #ffffff">		}</a>
+   943) <a name="l943" style="background-color: #ffffff"></a>
+   944) <a name="l944" style="background-color: #ffcccc">	_Wrap_alloc(_Wrap_alloc&amp;&amp; _Right) _THROW0()</a>
+   945) <a name="l945" style="background-color: #ffcccc">		: _Mybase(_STD move(_Right))</a>
+   946) <a name="l946" style="background-color: #ffcccc">		{	// construct by moving</a>
+   947) <a name="l947" style="background-color: #ffcccc">		}</a>
+   948) <a name="l948" style="background-color: #ffffff"></a>
+   949) <a name="l949" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   950) <a name="l950" style="background-color: #ffffff">		_Wrap_alloc(_Other&amp;&amp; _Right) _THROW0()</a>
+   951) <a name="l951" style="background-color: #ffffff">		: _Mybase(_STD forward&lt;_Other&gt;(_Right))</a>
+   952) <a name="l952" style="background-color: #ffffff">		{	// construct from a related allocator</a>
+   953) <a name="l953" style="background-color: #ffffff">		}</a>
+   954) <a name="l954" style="background-color: #ffffff"></a>
+   955) <a name="l955" style="background-color: #ffffff">	_Wrap_alloc&amp; operator=(const _Wrap_alloc&amp; _Right)</a>
+   956) <a name="l956" style="background-color: #ffffff">		{	// assign by copying</a>
+   957) <a name="l957" style="background-color: #ffffff">		_Mybase::operator=(_Right);</a>
+   958) <a name="l958" style="background-color: #ffffff">		return (*this);</a>
+   959) <a name="l959" style="background-color: #ffffff">		}</a>
+   960) <a name="l960" style="background-color: #ffffff"></a>
+   961) <a name="l961" style="background-color: #ffffff">	_Wrap_alloc&amp; operator=(_Wrap_alloc&amp;&amp; _Right)</a>
+   962) <a name="l962" style="background-color: #ffffff">		{	// assign by moving</a>
+   963) <a name="l963" style="background-color: #ffffff">		_Mybase::operator=(_STD move(_Right));</a>
+   964) <a name="l964" style="background-color: #ffffff">		return (*this);</a>
+   965) <a name="l965" style="background-color: #ffffff">		}</a>
+   966) <a name="l966" style="background-color: #ffffff"></a>
+   967) <a name="l967" style="background-color: #ffffff">	template&lt;class _Other&gt;</a>
+   968) <a name="l968" style="background-color: #ffffff">		_Wrap_alloc&amp; operator=(_Other&amp;&amp; _Right)</a>
+   969) <a name="l969" style="background-color: #ffffff">		{	// assign from a related allocator</a>
+   970) <a name="l970" style="background-color: #ffffff">		_Mybase::operator=(_STD forward&lt;_Other&gt;(_Right));</a>
+   971) <a name="l971" style="background-color: #ffffff">		return (*this);</a>
+   972) <a name="l972" style="background-color: #ffffff">		}</a>
+   973) <a name="l973" style="background-color: #ffffff"></a>
+   974) <a name="l974" style="background-color: #ffffff">	_DECLSPEC_ALLOCATOR pointer allocate(size_type _Count)</a>
+   975) <a name="l975" style="background-color: #ffffff">		{	// allocate array of _Count elements</a>
+   976) <a name="l976" style="background-color: #ffffff">		return (_Mybase::allocate(_Count));</a>
+   977) <a name="l977" style="background-color: #ffffff">		}</a>
+   978) <a name="l978" style="background-color: #ffffff"></a>
+   979) <a name="l979" style="background-color: #ffffff">	_DECLSPEC_ALLOCATOR pointer allocate(size_type _Count,</a>
+   980) <a name="l980" style="background-color: #ffffff">		const_void_pointer _Hint, _Nil = _Nil())</a>
+   981) <a name="l981" style="background-color: #ffffff">		{	// allocate array of _Count elements, with hint</a>
+   982) <a name="l982" style="background-color: #ffffff">		return (_Mytraits::allocate(*this, _Count, _Hint));</a>
+   983) <a name="l983" style="background-color: #ffffff">		}</a>
+   984) <a name="l984" style="background-color: #ffffff"></a>
+   985) <a name="l985" style="background-color: #ffffff">	void deallocate(pointer _Ptr, size_type _Count)</a>
+   986) <a name="l986" style="background-color: #ffffff">		{	// deallocate object at _Ptr, ignore size</a>
+   987) <a name="l987" style="background-color: #ffffff">		_Mybase::deallocate(_Ptr, _Count);</a>
+   988) <a name="l988" style="background-color: #ffffff">		}</a>
+   989) <a name="l989" style="background-color: #ffffff"></a>
+   990) <a name="l990" style="background-color: #ffffff">	template&lt;class _Ty,</a>
+   991) <a name="l991" style="background-color: #ffffff">		class... _Types&gt;</a>
+   992) <a name="l992" style="background-color: #ffffff">		void construct(_Ty *_Ptr,</a>
+   993) <a name="l993" style="background-color: #ffffff">			_Types&amp;&amp;... _Args)</a>
+   994) <a name="l994" style="background-color: #ffffff">		{	// construct _Ty(_Types...) at _Ptr</a>
+   995) <a name="l995" style="background-color: #ffffff">		_Mytraits::construct(*this, _Ptr,</a>
+   996) <a name="l996" style="background-color: #ffffff">			_STD forward&lt;_Types&gt;(_Args)...);</a>
+   997) <a name="l997" style="background-color: #ffffff">		}</a>
+   998) <a name="l998" style="background-color: #ffffff"></a>
+   999) <a name="l999" style="background-color: #ffffff"></a>
+  1000) <a name="l1000" style="background-color: #ffffff">	template&lt;class _Ty&gt;</a>
+  1001) <a name="l1001" style="background-color: #ffffff">		void destroy(_Ty *_Ptr)</a>
+  1002) <a name="l1002" style="background-color: #ffffff">		{	// destroy object at _Ptr</a>
+  1003) <a name="l1003" style="background-color: #ffffff">		_Mytraits::destroy(*this, _Ptr);</a>
+  1004) <a name="l1004" style="background-color: #ffffff">		}</a>
+  1005) <a name="l1005" style="background-color: #ffffff"></a>
+  1006) <a name="l1006" style="background-color: #ffffff">	size_type max_size(_Nil = _Nil()) const _NOEXCEPT</a>
+  1007) <a name="l1007" style="background-color: #ffffff">		{	// get maximum size</a>
+  1008) <a name="l1008" style="background-color: #ffffff">		return (_Mytraits::max_size(*this));</a>
+  1009) <a name="l1009" style="background-color: #ffffff">		}</a>
+  1010) <a name="l1010" style="background-color: #ffffff">	};</a>
+  1011) <a name="l1011" style="background-color: #ffffff"></a>
+  1012) <a name="l1012" style="background-color: #ffffff">template&lt;class _Ty,</a>
+  1013) <a name="l1013" style="background-color: #ffffff">	class _Other&gt; inline</a>
+  1014) <a name="l1014" style="background-color: #ffffff">	bool operator==(const _Wrap_alloc&lt;_Ty&gt;&amp; _Left,</a>
+  1015) <a name="l1015" style="background-color: #ffffff">		const _Wrap_alloc&lt;_Other&gt;&amp; _Right) _THROW0()</a>
+  1016) <a name="l1016" style="background-color: #ffffff">	{	// test for allocator equality</a>
+  1017) <a name="l1017" style="background-color: #ffffff">	return (static_cast&lt;const _Ty&amp;&gt;(_Left)</a>
+  1018) <a name="l1018" style="background-color: #ffffff">		== static_cast&lt;const _Other&amp;&gt;(_Right));</a>
+  1019) <a name="l1019" style="background-color: #ffffff">	}</a>
+  1020) <a name="l1020" style="background-color: #ffffff"></a>
+  1021) <a name="l1021" style="background-color: #ffffff">template&lt;class _Ty,</a>
+  1022) <a name="l1022" style="background-color: #ffffff">	class _Other&gt; inline</a>
+  1023) <a name="l1023" style="background-color: #ffffff">	bool operator!=(const _Wrap_alloc&lt;_Ty&gt;&amp; _Left,</a>
+  1024) <a name="l1024" style="background-color: #ffffff">		const _Wrap_alloc&lt;_Other&gt;&amp; _Right) _THROW0()</a>
+  1025) <a name="l1025" style="background-color: #ffffff">	{	// test for allocator inequality</a>
+  1026) <a name="l1026" style="background-color: #ffffff">	return (!(_Left == _Right));</a>
+  1027) <a name="l1027" style="background-color: #ffffff">	}</a>
+  1028) <a name="l1028" style="background-color: #ffffff"></a>
+  1029) <a name="l1029" style="background-color: #ffffff">		// TEMPLATE FUNCTION _Pocca</a>
+  1030) <a name="l1030" style="background-color: #ffffff">template&lt;class _Alty&gt; inline</a>
+  1031) <a name="l1031" style="background-color: #ffffff">	void _Pocca(_Alty&amp; _Left, const _Alty&amp; _Right, true_type) _NOEXCEPT</a>
+  1032) <a name="l1032" style="background-color: #ffffff">	{	// propagate on container copy assignment</a>
+  1033) <a name="l1033" style="background-color: #ffffff">	_Left = _Right;</a>
+  1034) <a name="l1034" style="background-color: #ffffff">	}</a>
+  1035) <a name="l1035" style="background-color: #ffffff"></a>
+  1036) <a name="l1036" style="background-color: #ffffff">template&lt;class _Alty&gt; inline</a>
+  1037) <a name="l1037" style="background-color: #ffffff">	void _Pocca(_Alty&amp;, const _Alty&amp;, false_type) _NOEXCEPT</a>
+  1038) <a name="l1038" style="background-color: #ffffff">	{	// (don't) propagate on container copy assignment</a>
+  1039) <a name="l1039" style="background-color: #ffffff">	}</a>
+  1040) <a name="l1040" style="background-color: #ffffff"></a>
+  1041) <a name="l1041" style="background-color: #ffffff">template&lt;class _Alty&gt; inline</a>
+  1042) <a name="l1042" style="background-color: #ffffff">	void _Pocca(_Alty&amp; _Left, const _Alty&amp; _Right) _NOEXCEPT</a>
+  1043) <a name="l1043" style="background-color: #ffffff">	{	// (maybe) propagate on container copy assignment</a>
+  1044) <a name="l1044" style="background-color: #ffffff">	typename _Alty::propagate_on_container_copy_assignment _Tag;</a>
+  1045) <a name="l1045" style="background-color: #ffffff">	_Pocca(_Left, _Right, _Tag);</a>
+  1046) <a name="l1046" style="background-color: #ffffff">	}</a>
+  1047) <a name="l1047" style="background-color: #ffffff"></a>
+  1048) <a name="l1048" style="background-color: #ffffff">		// TEMPLATE FUNCTION _Pocma</a>
+  1049) <a name="l1049" style="background-color: #ffffff">template&lt;class _Alty&gt; inline</a>
+  1050) <a name="l1050" style="background-color: #ffffff">	void _Pocma(_Alty&amp; _Left, _Alty&amp; _Right, true_type) _NOEXCEPT</a>
+  1051) <a name="l1051" style="background-color: #ffffff">	{	// propagate on container move assignment</a>
+  1052) <a name="l1052" style="background-color: #ffffff">	_Left = _STD move(_Right);</a>
+  1053) <a name="l1053" style="background-color: #ffffff">	}</a>
+  1054) <a name="l1054" style="background-color: #ffffff"></a>
+  1055) <a name="l1055" style="background-color: #ffffff">template&lt;class _Alty&gt; inline</a>
+  1056) <a name="l1056" style="background-color: #ffffff">	void _Pocma(_Alty&amp;, _Alty&amp;, false_type) _NOEXCEPT</a>
+  1057) <a name="l1057" style="background-color: #ffffff">	{	// (don't) propagate on container move assignment</a>
+  1058) <a name="l1058" style="background-color: #ffffff">	}</a>
+  1059) <a name="l1059" style="background-color: #ffffff"></a>
+  1060) <a name="l1060" style="background-color: #ffffff">template&lt;class _Alty&gt; inline</a>
+  1061) <a name="l1061" style="background-color: #ffffff">	void _Pocma(_Alty&amp; _Left, _Alty&amp; _Right) _NOEXCEPT</a>
+  1062) <a name="l1062" style="background-color: #ffffff">	{	// (maybe) propagate on container move assignment</a>
+  1063) <a name="l1063" style="background-color: #ffffff">	typename _Alty::propagate_on_container_move_assignment _Tag;</a>
+  1064) <a name="l1064" style="background-color: #ffffff">	_Pocma(_Left, _Right, _Tag);</a>
+  1065) <a name="l1065" style="background-color: #ffffff">	}</a>
+  1066) <a name="l1066" style="background-color: #ffffff"></a>
+  1067) <a name="l1067" style="background-color: #ffffff">		// TEMPLATE FUNCTION _Pocs</a>
+  1068) <a name="l1068" style="background-color: #ffffff">template&lt;class _Alty&gt; inline</a>
+  1069) <a name="l1069" style="background-color: #ffffff">	void _Pocs(_Alty&amp; _Left, _Alty&amp; _Right, true_type) _NOEXCEPT</a>
+  1070) <a name="l1070" style="background-color: #ffffff">	{	// propagate on container swap</a>
+  1071) <a name="l1071" style="background-color: #ffffff">	_Swap_adl(_Left, _Right);</a>
+  1072) <a name="l1072" style="background-color: #ffffff">	}</a>
+  1073) <a name="l1073" style="background-color: #ffffff"></a>
+  1074) <a name="l1074" style="background-color: #ffffff">template&lt;class _Alty&gt; inline</a>
+  1075) <a name="l1075" style="background-color: #ffffff">	void _Pocs(_Alty&amp; _Left, _Alty&amp; _Right, false_type) _NOEXCEPT</a>
+  1076) <a name="l1076" style="background-color: #ffffff">	{	// (don't) propagate on container swap</a>
+  1077) <a name="l1077" style="background-color: #ffffff">	if (_Left != _Right)</a>
+  1078) <a name="l1078" style="background-color: #ffffff">		{	// containers are incompatible</a>
+  1079) <a name="l1079" style="background-color: #ffffff"> #if _ITERATOR_DEBUG_LEVEL == 2</a>
+  1080) <a name="l1080" style="background-color: #ffffff">		_DEBUG_ERROR(&quot;containers incompatible for swap&quot;);</a>
+  1081) <a name="l1081" style="background-color: #ffffff"> #else /* ITERATOR_DEBUG_LEVEL == 2 */</a>
+  1082) <a name="l1082" style="background-color: #ffffff">		_XSTD terminate();</a>
+  1083) <a name="l1083" style="background-color: #ffffff"> #endif /* ITERATOR_DEBUG_LEVEL == 2 */</a>
+  1084) <a name="l1084" style="background-color: #ffffff">		}</a>
+  1085) <a name="l1085" style="background-color: #ffffff">	}</a>
+  1086) <a name="l1086" style="background-color: #ffffff"></a>
+  1087) <a name="l1087" style="background-color: #ffffff">template&lt;class _Alty&gt; inline</a>
+  1088) <a name="l1088" style="background-color: #ffffff">	void _Pocs(_Alty&amp; _Left, _Alty&amp; _Right) _NOEXCEPT</a>
+  1089) <a name="l1089" style="background-color: #ffffff">	{	// (maybe) propagate on container swap</a>
+  1090) <a name="l1090" style="background-color: #ffffff">	typename _Alty::propagate_on_container_swap _Tag;</a>
+  1091) <a name="l1091" style="background-color: #ffffff">	_Pocs(_Left, _Right, _Tag);</a>
+  1092) <a name="l1092" style="background-color: #ffffff">	}</a>
+  1093) <a name="l1093" style="background-color: #ffffff"></a>
+  1094) <a name="l1094" style="background-color: #ffffff"></a>
+  1095) <a name="l1095" style="background-color: #ffffff">		// TEMPLATE FUNCTION _Destroy_range WITH ALLOC</a>
+  1096) <a name="l1096" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+  1097) <a name="l1097" style="background-color: #ffffff">	class _Ptr = typename _Wrap_alloc&lt;_Alloc&gt;::pointer&gt; inline</a>
+  1098) <a name="l1098" style="background-color: #ffffff">	void </a><a style="background-color: #ffcccc">_Destroy_range1(_Ptr _First, _Ptr _Last, _Wrap_alloc&lt;_Alloc&gt;&amp; _Al, false_type)</a>
+  1099) <a name="l1099" style="background-color: #ffcccc">	{	// destroy [_First, _Last), no special optimization</a>
+  1100) <a name="l1100" style="background-color: #ffcccc">	for (; _First != _Last; ++_First)</a>
+  1101) <a name="l1101" style="background-color: #ffcccc">		_Al.destroy(_Unfancy(_First));</a>
+  1102) <a name="l1102" style="background-color: #ffcccc">	}</a>
+  1103) <a name="l1103" style="background-color: #ffffff"></a>
+  1104) <a name="l1104" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+  1105) <a name="l1105" style="background-color: #ffffff">	class _Ptr = typename _Wrap_alloc&lt;_Alloc&gt;::pointer&gt; inline</a>
+  1106) <a name="l1106" style="background-color: #ffffff">	void _Destroy_range1(_Ptr, _Ptr, _Wrap_alloc&lt;_Alloc&gt;&amp;, true_type)</a>
+  1107) <a name="l1107" style="background-color: #ffffff">	{	// destroy [_First, _Last), trivially destructible and default destroy</a>
+  1108) <a name="l1108" style="background-color: #ffffff">		// nothing to do</a>
+  1109) <a name="l1109" style="background-color: #ffffff">	}</a>
+  1110) <a name="l1110" style="background-color: #ffffff"></a>
+  1111) <a name="l1111" style="background-color: #ffffff">template&lt;class _Alloc,</a>
+  1112) <a name="l1112" style="background-color: #ffffff">	class _Ptr = typename _Wrap_alloc&lt;_Alloc&gt;::pointer&gt; inline</a>
+  1113) <a name="l1113" style="background-color: #ffffff">	void _Destroy_range(_Ptr _First, _Ptr _Last, _Wrap_alloc&lt;_Alloc&gt;&amp; _Al)</a>
+  1114) <a name="l1114" style="background-color: #ffffff">	{	// destroy [_First, _Last), choose optimization</a>
+  1115) <a name="l1115" style="background-color: #ffffff">		// note that this is an optimization for debug mode codegen;</a>
+  1116) <a name="l1116" style="background-color: #ffffff">		// in release mode the BE removes all of this</a>
+  1117) <a name="l1117" style="background-color: #ffffff">	typedef typename _Alloc::value_type _Val;</a>
+  1118) <a name="l1118" style="background-color: #ffffff">	_Destroy_range1(_First, _Last, _Al, typename conjunction&lt;</a>
+  1119) <a name="l1119" style="background-color: #ffffff">		is_trivially_destructible&lt;_Val&gt;,</a>
+  1120) <a name="l1120" style="background-color: #ffffff">		_Uses_default_destroy&lt;_Alloc, _Val *&gt;&gt;::type());</a>
+  1121) <a name="l1121" style="background-color: #ffffff">	}</a>
+  1122) <a name="l1122" style="background-color: #ffffff"></a>
+  1123) <a name="l1123" style="background-color: #ffffff"></a>
+  1124) <a name="l1124" style="background-color: #ffffff">		// TEMPLATE FUNCTION _Destroy_range</a>
+  1125) <a name="l1125" style="background-color: #ffffff">template&lt;class _FwdIt&gt; inline</a>
+  1126) <a name="l1126" style="background-color: #ffffff">	void _Destroy_range1(_FwdIt _First, _FwdIt _Last, false_type)</a>
+  1127) <a name="l1127" style="background-color: #ffffff">	{	// destroy [_First, _Last), no special optimization</a>
+  1128) <a name="l1128" style="background-color: #ffffff">	for (; _First != _Last; ++_First)</a>
+  1129) <a name="l1129" style="background-color: #ffffff">		_Destroy(_First);</a>
+  1130) <a name="l1130" style="background-color: #ffffff">	}</a>
+  1131) <a name="l1131" style="background-color: #ffffff"></a>
+  1132) <a name="l1132" style="background-color: #ffffff">template&lt;class _FwdIt&gt; inline</a>
+  1133) <a name="l1133" style="background-color: #ffffff">	void _Destroy_range1(_FwdIt, _FwdIt, true_type)</a>
+  1134) <a name="l1134" style="background-color: #ffffff">	{	// destroy [_First, _Last), trivially destructible</a>
+  1135) <a name="l1135" style="background-color: #ffffff">		// nothing to do</a>
+  1136) <a name="l1136" style="background-color: #ffffff">	}</a>
+  1137) <a name="l1137" style="background-color: #ffffff"></a>
+  1138) <a name="l1138" style="background-color: #ffffff">template&lt;class _FwdIt&gt; inline</a>
+  1139) <a name="l1139" style="background-color: #ffffff">	void _Destroy_range(_FwdIt _First, _FwdIt _Last)</a>
+  1140) <a name="l1140" style="background-color: #ffffff">	{	// destroy [_First, _Last), choose optimization</a>
+  1141) <a name="l1141" style="background-color: #ffffff">		// note that this is an optimization for debug mode codegen;</a>
+  1142) <a name="l1142" style="background-color: #ffffff">		// in release mode the BE removes all of this</a>
+  1143) <a name="l1143" style="background-color: #ffffff">	_Destroy_range1(_First, _Last, is_trivially_destructible&lt;_Iter_value_t&lt;_FwdIt&gt;&gt;());</a>
+  1144) <a name="l1144" style="background-color: #ffffff">	}</a>
+  1145) <a name="l1145" style="background-color: #ffffff">_STD_END</a>
+  1146) <a name="l1146" style="background-color: #ffffff"></a>
+  1147) <a name="l1147" style="background-color: #ffffff">		// ATOMIC REFERENCE COUNTING PRIMITIVES</a>
+  1148) <a name="l1148" style="background-color: #ffffff">  #include &lt;xatomic0.h&gt;</a>
+  1149) <a name="l1149" style="background-color: #ffffff"></a>
+  1150) <a name="l1150" style="background-color: #ffffff">  #if _USE_INTERLOCKED_REFCOUNTING</a>
+  1151) <a name="l1151" style="background-color: #ffffff">   #include &lt;intrin.h&gt;</a>
+  1152) <a name="l1152" style="background-color: #ffffff"></a>
+  1153) <a name="l1153" style="background-color: #ffffff">   #define _MT_INCR(x) \</a>
+  1154) <a name="l1154" style="background-color: #ffffff">	_InterlockedIncrement(reinterpret_cast&lt;volatile long *&gt;(&amp;x))</a>
+  1155) <a name="l1155" style="background-color: #ffffff">   #define _MT_DECR(x) \</a>
+  1156) <a name="l1156" style="background-color: #ffffff">	_InterlockedDecrement(reinterpret_cast&lt;volatile long *&gt;(&amp;x))</a>
+  1157) <a name="l1157" style="background-color: #ffffff"></a>
+  1158) <a name="l1158" style="background-color: #ffffff">  #else /* _USE_INTERLOCKED_REFCOUNTING */</a>
+  1159) <a name="l1159" style="background-color: #ffffff">   #include &lt;xatomic.h&gt;</a>
+  1160) <a name="l1160" style="background-color: #ffffff"></a>
+  1161) <a name="l1161" style="background-color: #ffffff">   #define _MT_INCR(x) \</a>
+  1162) <a name="l1162" style="background-color: #ffffff">	_Inc_atomic_counter_explicit(x, memory_order_relaxed)</a>
+  1163) <a name="l1163" style="background-color: #ffffff">   #define _MT_DECR(x) \</a>
+  1164) <a name="l1164" style="background-color: #ffffff">	_Dec_atomic_counter_explicit(x, memory_order_acq_rel)</a>
+  1165) <a name="l1165" style="background-color: #ffffff">  #endif /* _USE_INTERLOCKED_REFCOUNTING */</a>
+  1166) <a name="l1166" style="background-color: #ffffff"></a>
+  1167) <a name="l1167" style="background-color: #ffffff"> #pragma pop_macro(&quot;new&quot;)</a>
+  1168) <a name="l1168" style="background-color: #ffffff"> #pragma warning(pop)</a>
+  1169) <a name="l1169" style="background-color: #ffffff"> #pragma pack(pop)</a>
+  1170) <a name="l1170" style="background-color: #ffffff">#endif /* RC_INVOKED */</a>
+  1171) <a name="l1171" style="background-color: #ffffff">#endif /* _XMEMORY0_ */</a>
+  1172) <a name="l1172" style="background-color: #ffffff"></a>
+  1173) <a name="l1173" style="background-color: #ffffff">/*</a>
+  1174) <a name="l1174" style="background-color: #ffffff"> * Copyright (c) by P.J. Plauger. All rights reserved.</a>
+  1175) <a name="l1175" style="background-color: #ffffff"> * Consult your license regarding permissions and restrictions.</a>
+  1176) <a name="l1176" style="background-color: #ffffff">V6.50:0009 */</a>
+</pre>
+<hr size=1 noshade>
+<table border=0 cellpadding=3 cellspacing=0 width="100%" style="color:black;font-weight:normal;font-family:Verdana,Arial;font-size:xx-small">
+<td width="50%">
+<table border=0 cellpadding=3 cellspacing=0>
+<tr>
+<td>
+<a target="_new" href="http://www.intel.com"><img src="__IntelR.gif" border="0"></a>
+</td>
+<td style="font-size:xx-small">
+<i>generated by </i><BR><a target="_new" href="http://www.intel.com/software/products/compilers">Intel(R) C++/Fortran Compiler code-coverage tool</a>
+</td>
+</tr>
+</table>
+</td>
+<td>
+<table border=0 cellpadding=3 cellspacing=0 width="50%">
+<tr><a>Web-Page Owner: <a href="mailto:nobody">Nobody</a></tr>
+</table>
+</td>
+</table>
+</body>
+</html>
