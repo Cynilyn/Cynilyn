@@ -1,0 +1,11 @@
+﻿  main.cpp
+c:\git\codeground\easy\숫자 골라내기\숫자 골라내기\main.cpp(6): warning C4996: 'setbuf': This function or variable may be unsafe. Consider using setvbuf instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(396): note: 'setbuf' 선언을 참조하십시오.
+c:\git\codeground\easy\숫자 골라내기\숫자 골라내기\main.cpp(11): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+c:\git\codeground\easy\숫자 골라내기\숫자 골라내기\main.cpp(14): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+c:\git\codeground\easy\숫자 골라내기\숫자 골라내기\main.cpp(16): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+  숫자 골라내기.vcxproj -> C:\GIT\CodeGround\Easy\숫자 골라내기\Debug\숫자 골라내기.exe
+  숫자 골라내기.vcxproj -> C:\GIT\CodeGround\Easy\숫자 골라내기\Debug\숫자 골라내기.pdb (Full PDB)

@@ -1,0 +1,11 @@
+﻿  main.cpp
+c:\git\codeground\easy\프로그래밍 경진대회\프로그래밍 경진대회\main.cpp(7): warning C4996: 'setbuf': This function or variable may be unsafe. Consider using setvbuf instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(396): note: 'setbuf' 선언을 참조하십시오.
+c:\git\codeground\easy\프로그래밍 경진대회\프로그래밍 경진대회\main.cpp(12): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+c:\git\codeground\easy\프로그래밍 경진대회\프로그래밍 경진대회\main.cpp(14): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+c:\git\codeground\easy\프로그래밍 경진대회\프로그래밍 경진대회\main.cpp(18): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+  프로그래밍 경진대회.vcxproj -> C:\GIT\CodeGround\Easy\프로그래밍 경진대회\Debug\프로그래밍 경진대회.exe
+  프로그래밍 경진대회.vcxproj -> C:\GIT\CodeGround\Easy\프로그래밍 경진대회\Debug\프로그래밍 경진대회.pdb (Full PDB)
