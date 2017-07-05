@@ -1,0 +1,4 @@
+﻿  main.cpp
+c:\git\codeground\괄호\괄호\main.cpp(29): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  괄호.vcxproj -> C:\GIT\CodeGround\괄호\Debug\괄호.exe
+  괄호.vcxproj -> C:\GIT\CodeGround\괄호\Debug\괄호.pdb (Full PDB)
