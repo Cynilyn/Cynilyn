@@ -1,0 +1,11 @@
+﻿  소스.cpp
+c:\git\boj\1285-동전 뒤집기\1285-동전 뒤집기\소스.cpp(11): warning C4800: 'int': 'true' 또는 'false'로 bool 값을 강제하고 있습니다(성능 경고).
+c:\git\boj\1285-동전 뒤집기\1285-동전 뒤집기\소스.cpp(42): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\git\boj\1285-동전 뒤집기\1285-동전 뒤집기\소스.cpp(33): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+c:\git\boj\1285-동전 뒤집기\1285-동전 뒤집기\소스.cpp(36): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+c:\git\boj\1285-동전 뒤집기\1285-동전 뒤집기\소스.cpp(39): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+  1285-동전 뒤집기.vcxproj -> C:\GIT\BOJ\1285-동전 뒤집기\Debug\1285-동전 뒤집기.exe
+  1285-동전 뒤집기.vcxproj -> C:\GIT\BOJ\1285-동전 뒤집기\Debug\1285-동전 뒤집기.pdb (Full PDB)
