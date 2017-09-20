@@ -1,0 +1,4 @@
+﻿  소스.cpp
+c:\git\boj\6064-카잉 달력\6064-카잉 달력\소스.cpp(23): warning C4101: 'gcm' :참조되지 않은 지역 변수입니다.
+  6064-카잉 달력.vcxproj -> C:\GIT\BOJ\6064-카잉 달력\Debug\6064-카잉 달력.exe
+  6064-카잉 달력.vcxproj -> C:\GIT\BOJ\6064-카잉 달력\Debug\6064-카잉 달력.pdb (Full PDB)
