@@ -1,0 +1,11 @@
+﻿  Merge.cpp
+Merge.cpp(8): warning C4101: 'm' :참조되지 않은 지역 변수입니다.
+Merge.cpp(45): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+Merge.cpp(49): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+  코드를 생성하고 있습니다.
+  All 10 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  코드를 생성했습니다.
+  MergeSort.vcxproj -> C:\GIT\Assignment\2017_Algorithm\MergeSort\Release\MergeSort.exe
+  MergeSort.vcxproj -> C:\GIT\Assignment\2017_Algorithm\MergeSort\Release\MergeSort.pdb (Full PDB)

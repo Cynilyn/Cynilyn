@@ -1,0 +1,8 @@
+﻿  Heapsort.cpp
+c:\git\assignment\2017_algorithm\heapsort\heapsort\heapsort.cpp(64): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+c:\git\assignment\2017_algorithm\heapsort\heapsort\heapsort.cpp(69): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1270): note: 'scanf' 선언을 참조하십시오.
+c:\git\assignment\2017_algorithm\heapsort\heapsort\heapsort.cpp(61): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+  HeapSort.vcxproj -> C:\GIT\Assignment\2017_Algorithm\HeapSort\Debug\HeapSort.exe
+  HeapSort.vcxproj -> C:\GIT\Assignment\2017_Algorithm\HeapSort\Debug\HeapSort.pdb (Full PDB)
