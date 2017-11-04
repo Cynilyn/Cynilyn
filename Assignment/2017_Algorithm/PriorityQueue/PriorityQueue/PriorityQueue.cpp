@@ -15,18 +15,18 @@ void siftUp(vector<int> &data, int cur) {
 
 void siftDown(vector<int> &data, int cur, int end) {
 	int left, right, max;
-	
+
 	while (cur * 2 <= end) {
 		left = (cur * 2);
 		right = (cur * 2) + 1;
 
 		max = cur;
+		if (right <= end && data[right] > data[max]) {
+			max = right;
+		}
 		if (data[left] > data[max]) {
 			max = left;
 		}
-		if (right <= end && data[right] > data[max]) {
-			max = right;
-		}		
 
 		if (max != cur) {
 			swap(data[max], data[cur]);
@@ -41,7 +41,7 @@ void siftDown(vector<int> &data, int cur, int end) {
 int main() {
 	int type, num, sub, idx, i, size = 0;
 	bool finish = false;
-	vector<int> data(1);	
+	vector<int> data(1);
 
 	while (!finish) {
 		scanf("%d", &type);
@@ -69,7 +69,7 @@ int main() {
 			}
 			else {
 				siftDown(data, idx, size);
-			}						
+			}
 		}
 		//terminate
 		else if (type == 0) {
